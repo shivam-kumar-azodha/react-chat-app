@@ -21,6 +21,8 @@ export enum EmojiTheme {
 
 export interface IEmojiPickerProps {
   open: boolean;
+  height?: string | number;
+  width?: string | number;
   emojiStyle?: EmojiStyle;
   theme?: EmojiTheme;
   autoFocusSearch?: boolean;
@@ -38,5 +40,6 @@ export interface IEmojiPickerProps {
   isForReactions?: {
     onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
     allowExpandReactions?: boolean;
+    reactions?: string[];
   };
 }

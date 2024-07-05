@@ -12,6 +12,8 @@ import {
 
 const EmojiPicker: React.FC<IEmojiPickerProps> = ({
   open,
+  height = "100%",
+  width = "100%",
   emojiStyle = EmojiStyle.NATIVE,
   theme = EmojiTheme.LIGHT,
   autoFocusSearch = false,
@@ -23,9 +25,9 @@ const EmojiPicker: React.FC<IEmojiPickerProps> = ({
   isForReactions,
   ...restProps
 }) => {
-  const { inputRef, setInputValue } = isForInputBox || {};
+  const inputRef = isForInputBox?.inputRef;
+  const setInputValue = isForInputBox?.setInputValue;
 
-  // DONT CHANGE ANYTHING IN THIS FUNCTION
   const insertEmojiToInput = useCallback(
     (emojiObject: EmojiClickData) => {
       if (inputRef?.current) {
@@ -63,9 +65,15 @@ const EmojiPicker: React.FC<IEmojiPickerProps> = ({
     [inputRef, setInputValue]
   );
 
+  const onEmojiClickHandler = isForInputBox
+    ? insertEmojiToInput
+    : isForReactions?.onEmojiClick;
+
   return (
     <EmojiPickerLib
       open={open}
+      height={height}
+      width={width}
       emojiStyle={emojiStyle}
       theme={theme as unknown as LibEmojiTheme}
       suggestedEmojisMode={suggestedEmojisMode}
@@ -73,11 +81,13 @@ const EmojiPicker: React.FC<IEmojiPickerProps> = ({
       searchPlaceholder={searchPlaceholder}
       skinTonesDisabled={skinTonesDisabled}
       searchDisabled={searchDisabled}
-      onEmojiClick={
-        isForInputBox ? insertEmojiToInput : isForReactions?.onEmojiClick
-      }
+      onEmojiClick={onEmojiClickHandler}
       reactionsDefaultOpen={!!isForReactions}
       allowExpandReactions={isForReactions?.allowExpandReactions}
+      {...(isForReactions?.reactions
+        ? { reactions: isForReactions.reactions }
+        : {})}
+      previewConfig={{ showPreview: false }}
       lazyLoadEmojis
       {...restProps}
     />
