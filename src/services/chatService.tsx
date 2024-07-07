@@ -31,6 +31,7 @@ export const useSubscribeToMessages = (
 
 // Function to send a message
 export const sendMessage = (messageData: IMessageData) => {
+  console.log("sending", messageData);
   if (messageData) {
     socket.emit("chatMessage", messageData);
   }

@@ -15,6 +15,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 }) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<IMessageData[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null
+  );
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<any>();
 
@@ -27,14 +31,44 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         senderId: currentUser,
         receiverId,
         message,
+        type: "text",
       };
-      sendMessage(messageData);
+      console.log("sending", messageData);
+      sendMessage(messageData as IMessageData);
       setMessage("");
     }
   };
 
-  // Scroll to bottom of messages on update
-  // @FIXME: scrolls for other chatrooms as well as messages are for all and not specific to this chat
+  const startRecording = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = (event) => {
+      const audioBlob = event.data;
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        const messageData = {
+          senderId: currentUser,
+          receiverId,
+          message: base64String,
+          type: "audio",
+        };
+        sendMessage(messageData as IMessageData);
+      };
+      reader.readAsDataURL(audioBlob);
+    };
+    recorder.start();
+    setMediaRecorder(recorder);
+    setIsRecording(true);
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  };
+
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -66,6 +100,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             key={messageData.id}
             message={messageData.message}
             isSent={messageData.senderId === currentUser}
+            type={messageData.type === "audio" ? "audio" : "text"}
           />
         ))}
         <div ref={messagesEndRef} />
@@ -113,23 +148,32 @@ const ChatBox: React.FC<ChatBoxProps> = ({
               </svg>
             </button>
           ) : (
-            <button type="button" onClick={() => console.log("records")}>
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M7 4C7 2.34315 8.34315 1 10 1C11.6569 1 13 2.34315 13 4V8C13 9.65685 11.6569 11 10 11C8.34315 11 7 9.65685 7 8V4Z"
-                  fill="#424BF9"
-                />
-                <path
-                  d="M11 14.9291C14.3923 14.4439 17 11.5265 17 8C17 7.44772 16.5523 7 16 7C15.4477 7 15 7.44772 15 8C15 10.7614 12.7614 13 10 13C7.23858 13 5 10.7614 5 8C5 7.44772 4.55228 7 4 7C3.44772 7 3 7.44772 3 8C3 11.5265 5.60771 14.4439 9 14.9291V17H6C5.44772 17 5 17.4477 5 18C5 18.5523 5.44772 19 6 19H14C14.5523 19 15 18.5523 15 18C15 17.4477 14.5523 17 14 17H11V14.9291Z"
-                  fill="#424BF9"
-                />
-              </svg>
+            <button
+              type="button"
+              onClick={isRecording ? stopRecording : startRecording}
+            >
+              {isRecording ? (
+                /* Stop Recording SVG */
+                "stop"
+              ) : (
+                /* Start Recording SVG */
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M7 4C7 2.34315 8.34315 1 10 1C11.6569 1 13 2.34315 13 4V8C13 9.65685 11.6569 11 10 11C8.34315 11 7 9.65685 7 8V4Z"
+                    fill="#424BF9"
+                  />
+                  <path
+                    d="M11 14.9291C14.3923 14.4439 17 11.5265 17 8C17 7.44772 16.5523 7 16 7C15.4477 7 15 7.44772 15 8C15 10.7614 12.7614 13 10 13C7.23858 13 5 10.7614 5 8C5 7.44772 4.55228 7 4 7C3.44772 7 3 7.44772 3 8C3 11.5265 5.60771 14.4439 9 14.9291V17H6C5.44772 17 5 17.4477 5 18C5 18.5523 5.44772 19 6 19H14C14.5523 19 15 18.5523 15 18C15 17.4477 14.5523 17 14 17H11V14.9291Z"
+                    fill="#424BF9"
+                  />
+                </svg>
+              )}
             </button>
           )}
         </div>
