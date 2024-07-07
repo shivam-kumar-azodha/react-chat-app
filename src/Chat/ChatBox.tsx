@@ -1,11 +1,8 @@
 import React, { useRef, useState } from "react";
 import EmojiPicker from "../EmojiPicker";
-import {
-  IMessageData,
-  sendMessage,
-  useSubscribeToMessages,
-} from "../services/chatService";
+import { sendMessage, useSubscribeToMessages } from "../services/chatService";
 import ChatBubble from "./ChatBubble";
+import { IMessageData } from "../types";
 
 interface ChatBoxProps {
   loggedInUser: string;

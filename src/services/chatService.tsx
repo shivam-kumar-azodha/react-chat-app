@@ -1,12 +1,6 @@
 import { useEffect } from "react";
 import { socket } from "./socket";
-
-export interface IMessageData {
-  id?: string;
-  senderId: string;
-  receiverId: string;
-  message: string;
-}
+import { IMessageData } from "../types";
 
 // Hook to subscribe to messages
 export const useSubscribeToMessages = (
