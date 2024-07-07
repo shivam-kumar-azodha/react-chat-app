@@ -1,4 +1,5 @@
-import Chat from "./Chat/Chat";
+import ChatBox from "./Chat/ChatBox";
+import GlobalChat from "./GlobalChat/GlobalChat";
 import AudioRecorderExample from "./components/audio-recorder-example";
 import EmojiPickerExample from "./components/emoji-picker-example";
 
@@ -11,8 +12,11 @@ const App: React.FC = () => {
       <div className="border min-h-60 p-4">
         <AudioRecorderExample />
       </div>
-      <div className="border min-h-60 p-4 row-span-3">
-        <Chat />
+      <div className="border min-h-60 p-4 row-span-2">
+        <ChatBox loggedInUser="Alice" receiverId="Bob" />
+      </div>
+      <div className="h-96 col-span-2">
+        <GlobalChat loggedInUser="Alice" />
       </div>
     </div>
   );

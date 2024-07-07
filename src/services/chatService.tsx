@@ -8,8 +8,10 @@ export interface IMessageData {
 }
 
 // Function to subscribe to chat messages
-export const useSubscribeToMessages = (setMessages: any) => {
+export const useSubscribeToMessages = (userId: string, setMessages: any) => {
   useEffect(() => {
+    socket.emit("joinRoom", userId);
+
     const handleNewMessage = (messageData: IMessageData) => {
       setMessages((prevMessages: any) => [...prevMessages, messageData]);
     };
@@ -26,7 +28,7 @@ export const useSubscribeToMessages = (setMessages: any) => {
       socket.off("chatMessage", handleNewMessage);
       socket.off("previousMessages", handlePreviousMessages);
     };
-  }, [setMessages]);
+  }, [userId, setMessages]);
 };
 
 // Function to send a message
