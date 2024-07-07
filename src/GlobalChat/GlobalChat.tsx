@@ -18,7 +18,11 @@ const GlobalChat = ({ loggedInUser }: { loggedInUser: string }) => {
         onSelectUser={handleSelectUser}
       />
 
-      <ChatBox loggedInUser={loggedInUser} receiverId={selectedUser} />
+      <ChatBox
+        key={selectedUser}
+        loggedInUser={loggedInUser}
+        receiverId={selectedUser}
+      />
     </div>
   );
 };
