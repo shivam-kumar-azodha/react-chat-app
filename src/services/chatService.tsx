@@ -8,17 +8,23 @@ export interface IMessageData {
 }
 
 // Function to subscribe to chat messages
-export const subscribeToMessages = (setMessages: any) => {
+export const useSubscribeToMessages = (setMessages: any) => {
   useEffect(() => {
     const handleNewMessage = (messageData: IMessageData) => {
       setMessages((prevMessages: any) => [...prevMessages, messageData]);
     };
 
+    const handlePreviousMessages = (msgs: IMessageData[]) => {
+      setMessages(msgs);
+    };
+
     socket.on("chatMessage", handleNewMessage);
+    socket.on("previousMessages", handlePreviousMessages);
 
     // Cleanup on unmount
     return () => {
       socket.off("chatMessage", handleNewMessage);
+      socket.off("previousMessages", handlePreviousMessages);
     };
   }, [setMessages]);
 };

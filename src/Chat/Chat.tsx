@@ -3,7 +3,7 @@ import EmojiPicker from "../EmojiPicker";
 import {
   IMessageData,
   sendMessage,
-  subscribeToMessages,
+  useSubscribeToMessages,
 } from "../services/chatService";
 
 function Chat() {
@@ -14,8 +14,7 @@ function Chat() {
   const senderId = "user1";
   const receiverId = "user2";
 
-  // Subscribe to messages
-  subscribeToMessages(setMessages);
+  useSubscribeToMessages(setMessages);
 
   const handleSendMessage = (e: any) => {
     e.preventDefault();
