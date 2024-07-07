@@ -21,7 +21,6 @@ const ChatList: React.FC<SidebarProps> = ({
             user === selectedUser ? "bg-gray-300" : ""
           }`}
           onClick={() => {
-            console.log("User selected: ", user); // Doesn't logs on click
             onSelectUser(user);
           }}
         >

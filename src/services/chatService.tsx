@@ -2,18 +2,22 @@ import { useEffect } from "react";
 import { socket } from "./socket";
 
 export interface IMessageData {
+  id?: string;
   senderId: string;
   receiverId: string;
   message: string;
 }
 
-// Function to subscribe to chat messages
-export const useSubscribeToMessages = (userId: string, setMessages: any) => {
+// Hook to subscribe to messages
+export const useSubscribeToMessages = (
+  userId: string,
+  setMessages: React.Dispatch<React.SetStateAction<IMessageData[]>>
+) => {
   useEffect(() => {
     socket.emit("joinRoom", userId);
 
     const handleNewMessage = (messageData: IMessageData) => {
-      setMessages((prevMessages: any) => [...prevMessages, messageData]);
+      setMessages((prevMessages) => [...prevMessages, messageData]);
     };
 
     const handlePreviousMessages = (msgs: IMessageData[]) => {

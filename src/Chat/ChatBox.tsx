@@ -5,6 +5,7 @@ import {
   sendMessage,
   useSubscribeToMessages,
 } from "../services/chatService";
+import ChatBubble from "./ChatBubble";
 
 interface ChatBoxProps {
   loggedInUser: string;
@@ -21,15 +22,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
   useSubscribeToMessages(receiverId, setMessages);
 
-  const handleSendMessage = (e: any) => {
+  const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    const messageData = {
-      senderId: currentUser,
-      receiverId,
-      message,
-    };
-    sendMessage(messageData);
-    setMessage("");
+    if (message.trim()) {
+      const messageData = {
+        senderId: currentUser,
+        receiverId,
+        message,
+      };
+      sendMessage(messageData);
+      setMessage("");
+    }
   };
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -41,14 +44,23 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       </div>
     );
 
+  const filteredMessages = messages.filter((msg) => {
+    return (
+      (msg.senderId === currentUser && msg.receiverId === receiverId) ||
+      (msg.senderId === receiverId && msg.receiverId === currentUser)
+    );
+  });
+
   return (
     <div className="h-full p-4 flex flex-col w-full">
       <h1 className="text-lg font-bold mb-4">Chat with {receiverId}</h1>
       <div className="flex-grow overflow-y-scroll border p-4 mb-4">
-        {messages.map((messageData: IMessageData, index: number) => (
-          <div key={index} className="mb-2">
-            {messageData.message}
-          </div>
+        {filteredMessages.map((messageData: IMessageData) => (
+          <ChatBubble
+            key={messageData.id}
+            message={messageData.message}
+            isSent={messageData.senderId === currentUser}
+          />
         ))}
       </div>
       <form onSubmit={handleSendMessage} className="flex relative">
