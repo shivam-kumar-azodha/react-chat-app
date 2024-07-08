@@ -6,10 +6,10 @@ import { IMessageData } from "../types";
 import SmileyIcon from "../icons/SmileyIcon";
 import SendMessageIcon from "../icons/SendMessageIcon";
 import MicIcon from "../icons/MicIcon";
-import TickIcon from "../icons/TickIcon";
-import CancelIcon from "../icons/CancelIcon";
-import AudioPlayer from "../AudioRecorder/AudioPlayer";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import CrossWithBlueCircleIcon from "../icons/CrossWithBlueCircleIcon";
+import AudioRecorder from "../AudioRecorder/AudioRecorder";
+import CancelIcon from "../icons/CancelIcon";
 
 interface ChatBoxProps {
   loggedInUser: string;
@@ -23,37 +23,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<IMessageData[]>([]);
   const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
-  );
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-  const [startTime, setStartTime] = useState<number | null>(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
+  const [audioBlob, setAudioBlob] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<any>();
 
   useSubscribeToMessages(receiverId, setMessages);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout = "" as unknown as NodeJS.Timeout;
-
-    if (isRecording) {
-      setStartTime(Date.now());
-      timer = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - (startTime || 0)) / 1000));
-      }, 1000);
-    } else {
-      clearInterval(timer);
-    }
-
-    return () => clearInterval(timer);
-  }, [isRecording, startTime]);
-
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
-  };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,33 +35,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       const messageData: IMessageData = {
         senderId: currentUser,
         receiverId,
-        message: audioBlob ? URL.createObjectURL(audioBlob) : message,
+        message: audioBlob || message,
         type: audioBlob ? "audio" : "text",
       };
       sendMessage(messageData);
       setMessage("");
       setAudioBlob(null);
-      setElapsedTime(0);
     }
   };
 
-  const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    recorder.ondataavailable = (event) => {
-      setAudioBlob(event.data);
-    };
-    recorder.start();
-    setMediaRecorder(recorder);
-    setIsRecording(true);
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      setIsRecording(false);
-      setElapsedTime(0);
-    }
+  const handleStopRecording = (base64Audio: string | null) => {
+    setIsRecording(false);
+    setAudioBlob(base64Audio);
   };
 
   useEffect(() => {
@@ -113,7 +72,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   });
 
   return (
-    <div className="h-full p-4 flex flex-col w-full relative ">
+    <div className="h-full p-4 flex flex-col w-full relative">
       <h1 className="text-lg font-bold mb-4">Chat with {receiverId}</h1>
       <div className="flex-grow overflow-y-scroll border p-4 mb-4">
         {filteredMessages.map((messageData: IMessageData) => (
@@ -126,23 +85,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         ))}
         <div ref={messagesEndRef} />
       </div>
-      {isRecording && (
-        <div className="flex items-center justify-between bg-white rounded-lg border-2 p-2 w-80 absolute bottom-20 right-10 border-[#424BF9]">
-          <div className="flex-grow">
-            <span>Recording... {formatTime(elapsedTime)}</span>
-          </div>
-          <button
-            onClick={() => {
-              setIsRecording(false);
-              setAudioBlob(null);
-              setElapsedTime(0);
-            }}
-            className="ml-4 p-2"
-          >
-            <CancelIcon />
-          </button>
-        </div>
-      )}
       <div className="border border-red-500 flex flex-col p-3 gap-2">
         {audioBlob && (
           <div className="rounded-md relative w-fit">
@@ -174,6 +116,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             >
               <SmileyIcon />
             </button>
+            {isRecording && (
+              <div className="w-80 absolute bottom-10 right-0">
+                <AudioRecorder
+                  isRecording={isRecording}
+                  onStopRecording={handleStopRecording}
+                  className="rounded-lg border-2 p-2 bg-white border-[#424BF9]"
+                />
+              </div>
+            )}
             {message || audioBlob ? (
               <button type="submit" className="cursor-pointer">
                 <SendMessageIcon />
@@ -181,10 +132,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             ) : (
               <button
                 type="button"
-                onClick={isRecording ? stopRecording : startRecording}
+                onClick={() => setIsRecording(!isRecording)}
                 className="cursor-pointer"
               >
-                {isRecording ? <TickIcon /> : <MicIcon />}
+                {isRecording ? <CancelIcon /> : <MicIcon />}
               </button>
             )}
           </div>

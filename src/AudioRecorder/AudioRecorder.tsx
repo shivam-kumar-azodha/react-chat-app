@@ -1,97 +1,98 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// import { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import TickIcon from "../icons/TickIcon";
 
-// const AudioRecorder = ({
-//   onRecordingComplete,
-// }: {
-//   onRecordingComplete: (audioBlob: any) => void;
-// }) => {
-//   const [isRecording, setIsRecording] = useState<unknown>(false);
-//   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>();
-//   const [audioChunks, setAudioChunks] = useState<any[]>([]);
-//   const audioRef = useRef<any>(null);
+interface AudioRecorderProps {
+  isRecording: boolean;
+  onStopRecording: (base64Audio: string | null) => void;
+  confirmIcon?: React.ReactNode;
+  className?: string;
+}
 
-//   const startRecording = async () => {
-//     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//     const recorder = new MediaRecorder(stream);
-//     setMediaRecorder(recorder as MediaRecorder);
+const AudioRecorder: React.FC<AudioRecorderProps> = ({
+  isRecording,
+  onStopRecording,
+  confirmIcon,
+  className,
+}) => {
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null
+  );
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-//     recorder.ondataavailable = (e) => {
-//       setAudioChunks((prev) => [...prev, e.data]);
-//     };
+  useEffect(() => {
+    if (isRecording) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
 
-//     recorder.start();
-//     setIsRecording(true);
-//   };
+    return () => clearInterval(timerRef.current!);
+  }, [isRecording]);
 
-//   const stopRecording = () => {
-//     if (mediaRecorder) {
-//       mediaRecorder.stop();
-
-//       mediaRecorder.onstop = () => {
-//         const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-//         const audioUrl = URL.createObjectURL(audioBlob);
-//         audioRef.current.src = audioUrl;
-//         onRecordingComplete(audioBlob);
-//         setIsRecording(false);
-//         setAudioChunks([]);
-//       };
-//     }
-//   };
-
-//   return (
-//     <div>
-//
-//       <audio ref={audioRef} controls />
-//     </div>
-//   );
-// };
-
-// export default AudioRecorder;
-
-import { useRef, useState } from "react";
-const AudioRecorder = () => {
-  const [recordedUrl, setRecordedUrl] = useState("");
-  const mediaStream = useRef<any>(null);
-  const mediaRecorder = useRef<any>(null);
-  const chunks = useRef<any>([]);
   const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaStream.current = stream;
-      mediaRecorder.current = new MediaRecorder(stream);
-      mediaRecorder.current.ondataavailable = (e: any) => {
-        if (e.data.size > 0) {
-          chunks.current.push(e.data);
-        }
-      };
-      mediaRecorder.current.onstop = () => {
-        const recordedBlob = new Blob(chunks.current, { type: "audio/webm" });
-        const url = URL.createObjectURL(recordedBlob);
-        setRecordedUrl(url);
-        chunks.current = [];
-      };
-      mediaRecorder.current.start();
-    } catch (error) {
-      console.error("Error accessing microphone:", error);
-    }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = async (event) => {
+      const base64Audio = await convertBlobToBase64(event.data);
+      onStopRecording(base64Audio);
+    };
+    recorder.start();
+    setMediaRecorder(recorder);
+    setStartTime(Date.now());
   };
+
   const stopRecording = () => {
-    if (mediaRecorder.current && mediaRecorder.current.state === "recording") {
-      mediaRecorder.current.stop();
-    }
-    if (mediaStream.current) {
-      mediaStream.current.getTracks().forEach((track: any) => {
-        track.stop();
-      });
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setElapsedTime(0);
+      setStartTime(null);
+      clearInterval(timerRef.current!);
     }
   };
+
+  const convertBlobToBase64 = (blob: Blob): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        resolve(base64String);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  useEffect(() => {
+    if (isRecording && startTime) {
+      timerRef.current = setInterval(() => {
+        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timerRef.current!);
+    }
+
+    return () => clearInterval(timerRef.current!);
+  }, [isRecording, startTime]);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
+
   return (
-    <div>
-      <audio controls src={recordedUrl} />
-      <button onClick={startRecording}>Start Recording</button>
-      <button onClick={stopRecording}>Stop Recording</button>
+    <div className={`flex items-center justify-between w-full ${className}`}>
+      <div className="flex-grow flex bg-gray-100 rounded-md p-2 text-sm">
+        <span className="flex-grow">Recording...</span>
+        <span className="">{formatTime(elapsedTime)}</span>
+      </div>
+      <button onClick={stopRecording} className="ml-2 p-2">
+        {confirmIcon || <TickIcon />}
+      </button>
     </div>
   );
 };
+
 export default AudioRecorder;

@@ -21,7 +21,7 @@ const AudioRecorderExample = () => {
           )
         )}
       </div> */}
-      <AudioRecorder />
+      {/* <AudioRecorder /> */}
     </div>
   );
 };
