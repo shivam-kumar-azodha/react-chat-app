@@ -13,7 +13,8 @@
     "emoji-picker-react": "^4.11.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "socket.io-client": "^4.7.5"
+    "socket.io-client": "^4.7.5",
+    "wavesurfer.js": "^7.8.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
