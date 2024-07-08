@@ -41,6 +41,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       sendMessage(messageData);
       setMessage("");
       setAudioBlob(null);
+      setShowEmojiPicker(false);
     }
   };
 
@@ -87,7 +88,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       </div>
       <div className="border border-red-500 flex flex-col p-3 gap-2">
         {audioBlob && (
-          <div className="rounded-md relative w-fit">
+          <div className="rounded-md relative w-80 border p-2">
             <div
               className="top-0 right-0 absolute z-10 cursor-pointer -mr-2 -mt-2"
               onClick={() => {

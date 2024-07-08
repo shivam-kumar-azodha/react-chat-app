@@ -1,4 +1,6 @@
 import React from "react";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
+import PlayIconWhite from "../icons/PlayIconWhite";
 
 type ChatBubbleProps = {
   message: string | ArrayBuffer | null;
@@ -17,14 +19,19 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isSent, type }) => {
       <div
         className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg text-white ${
           isOnlyEmoji
-            ? "text-4xl" // Class to make emojis bigger
+            ? "text-4xl"
             : isSent
             ? "bg-blue-500 px-4 py-2"
             : "bg-gray-300 text-black px-4 py-2"
         }`}
       >
         {type === "audio" ? (
-          <audio controls src={message as string} />
+          <div className="w-80">
+            <AudioPlayer
+              audioBlob={message as string}
+              playButtonIcon={<PlayIconWhite />}
+            />
+          </div>
         ) : (
           (message as string)
         )}
