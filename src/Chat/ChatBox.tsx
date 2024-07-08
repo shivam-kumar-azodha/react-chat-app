@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import WaveSurfer from "wavesurfer.js";
 import EmojiPicker from "../EmojiPicker";
 import { sendMessage, useSubscribeToMessages } from "../services/chatService";
 import ChatBubble from "./ChatBubble";
@@ -7,10 +6,10 @@ import { IMessageData } from "../types";
 import SmileyIcon from "../icons/SmileyIcon";
 import SendMessageIcon from "../icons/SendMessageIcon";
 import MicIcon from "../icons/MicIcon";
-import TickIcon from "../icons/TickIcon.tsx";
+import TickIcon from "../icons/TickIcon";
 import CancelIcon from "../icons/CancelIcon";
-import AudioPlayer from "../AudioRecorder/AudioPlayer.tsx";
-import CrossWithBlueCircleIcon from "../icons/CrossWithBlueCircleIcon.tsx";
+import AudioPlayer from "../AudioRecorder/AudioPlayer";
+import CrossWithBlueCircleIcon from "../icons/CrossWithBlueCircleIcon";
 
 interface ChatBoxProps {
   loggedInUser: string;
@@ -28,12 +27,33 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     null
   );
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-  const [waveSurfer, setWaveSurfer] = useState<WaveSurfer | null>(null);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const waveFormRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<any>();
 
   useSubscribeToMessages(receiverId, setMessages);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout = "" as unknown as NodeJS.Timeout;
+
+    if (isRecording) {
+      setStartTime(Date.now());
+      timer = setInterval(() => {
+        setElapsedTime(Math.floor((Date.now() - (startTime || 0)) / 1000));
+      }, 1000);
+    } else {
+      clearInterval(timer);
+    }
+
+    return () => clearInterval(timer);
+  }, [isRecording, startTime]);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,6 +67,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       sendMessage(messageData);
       setMessage("");
       setAudioBlob(null);
+      setElapsedTime(0);
     }
   };
 
@@ -59,23 +80,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     recorder.start();
     setMediaRecorder(recorder);
     setIsRecording(true);
-
-    // Initialize WaveSurfer
-    const waveSurferInstance = WaveSurfer.create({
-      container: "#waveform",
-      waveColor: "violet",
-      progressColor: "purple",
-    });
-    setWaveSurfer(waveSurferInstance);
-
-    // Update WaveSurfer with the audio stream
-    waveSurferInstance.load(stream as any);
   };
 
   const stopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
       setIsRecording(false);
+      setElapsedTime(0);
     }
   };
 
@@ -117,11 +128,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       </div>
       {isRecording && (
         <div className="flex items-center justify-between bg-white rounded-lg border-2 p-2 w-80 absolute bottom-20 right-10 border-[#424BF9]">
-          <div id="waveform" ref={waveFormRef} className="flex-grow"></div>
+          <div className="flex-grow">
+            <span>Recording... {formatTime(elapsedTime)}</span>
+          </div>
           <button
             onClick={() => {
               setIsRecording(false);
               setAudioBlob(null);
+              setElapsedTime(0);
             }}
             className="ml-4 p-2"
           >

@@ -11,7 +11,7 @@ const GlobalChat = ({ loggedInUser }: { loggedInUser: string }) => {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-screen">
       <ChatList
         users={users.filter((user) => user !== loggedInUser)}
         selectedUser={selectedUser}
