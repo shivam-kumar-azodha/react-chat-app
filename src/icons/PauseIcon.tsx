@@ -7,8 +7,8 @@ const PauseIcon = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect x="7" y="6" width="3" height="12" fill="white" />
-      <rect x="14" y="6" width="3" height="12" fill="white" />
+      <rect x="7" y="6" width="3" height="12" fill="blue" />
+      <rect x="14" y="6" width="3" height="12" fill="blue" />
     </svg>
   );
 };

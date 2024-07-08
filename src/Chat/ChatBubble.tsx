@@ -1,6 +1,7 @@
 import React from "react";
 import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import PlayIconWhite from "../icons/PlayIconWhite";
+import PauseIconWhite from "../icons/PauseIconWhite";
 
 type ChatBubbleProps = {
   message: string | ArrayBuffer | null;
@@ -30,6 +31,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isSent, type }) => {
             <AudioPlayer
               audioBlob={message as string}
               playButtonIcon={<PlayIconWhite />}
+              pauseButtonIcon={<PauseIconWhite />}
             />
           </div>
         ) : (
