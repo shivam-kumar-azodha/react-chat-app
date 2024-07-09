@@ -6,8 +6,6 @@ import { IMessageData } from "../types";
 import SmileyIcon from "../icons/SmileyIcon";
 import SendMessageIcon from "../icons/SendMessageIcon";
 import MicIcon from "../icons/MicIcon";
-import AudioPlayer from "../AudioPlayer/AudioPlayer";
-import CrossWithBlueCircleIcon from "../icons/CrossWithBlueCircleIcon";
 import AudioRecorder from "../AudioRecorder/AudioRecorder";
 import CancelIcon from "../icons/CancelIcon";
 import AttachementIcon from "../icons/AttachementIcon";
@@ -26,7 +24,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const [messages, setMessages] = useState<IMessageData[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
-  const [audioBlob, setAudioBlob] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<any>();
@@ -35,26 +32,20 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() || audioBlob) {
+    if (message.trim()) {
       const messageData: IMessageData = {
         senderId: currentUser,
         receiverId,
-        message: audioBlob || message,
-        type: audioBlob ? "audio" : "text",
+        message: message,
+        type: "text",
       };
       sendMessage(messageData);
       setMessage("");
-      setAudioBlob(null);
       setShowEmojiPicker(false);
     }
   };
 
-  const handleStopRecording = (base64Audio: string | null) => {
-    setIsRecording(false);
-    setAudioBlob(base64Audio);
-  };
-
-  const handleAudioRecordingUrl = (recordedFile: Blob) => {
+  const handleAudioRecording = (recordedFile: Blob) => {
     setIsRecording(false);
     setSelectedFiles((prevFiles) => [
       {
@@ -100,6 +91,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     setSelectedFiles((prevPreviews) => [...prevPreviews, ...newFilePreviews]);
   };
 
+  const showAttachmentButton = !(
+    isRecording || selectedFiles.some((file) => file.isRecording)
+  );
+
   return (
     <div className="h-full p-4 flex flex-col w-full relative">
       <h1 className="text-lg font-bold mb-4">Chat with {receiverId}</h1>
@@ -114,27 +109,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div className="border flex flex-col p-3 gap-2">
+      <div className="border flex flex-col px-3 py-2 gap-2">
         {!!selectedFiles?.length && (
           <FilesPreview files={selectedFiles} setFiles={setSelectedFiles} />
         )}
 
-        {audioBlob && (
-          <div className="rounded-md relative w-80 border p-2">
-            <div
-              className="top-0 right-0 absolute z-10 cursor-pointer -mr-2 -mt-2"
-              onClick={() => {
-                setAudioBlob(null);
-              }}
-            >
-              <CrossWithBlueCircleIcon />
-            </div>
-            <AudioPlayer audioBlob={audioBlob} />
-          </div>
-        )}
         <form onSubmit={handleSendMessage} className="flex relative gap-3">
           <div className="flex flex-row w-full pr-1 rounded-md">
-            {
+            {showAttachmentButton && (
               <button
                 type="button"
                 className="cursor-pointer relative mr-2"
@@ -153,13 +135,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                 />
                 <AttachementIcon />
               </button>
-            }
+            )}
+
             <input
               ref={inputRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               autoComplete="off"
-              className="rounded-md flex-grow mr-2 p-2"
+              className="rounded-md flex-grow mr-2 p-2 focus:outline-none"
               placeholder="Type a message"
             />
             <button
@@ -173,13 +156,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({
               <div className="w-80 absolute bottom-10 right-0">
                 <AudioRecorder
                   isRecording={isRecording}
-                  onStopRecording={handleStopRecording}
-                  onStopRecordingUrl={handleAudioRecordingUrl}
+                  onStopRecording={handleAudioRecording}
                   className="rounded-lg border-2 p-2 bg-white border-[#424BF9]"
                 />
               </div>
             )}
-            {message || audioBlob ? (
+            {message || !!selectedFiles?.length ? (
               <button type="submit" className="cursor-pointer">
                 <SendMessageIcon />
               </button>

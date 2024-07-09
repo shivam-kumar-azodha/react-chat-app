@@ -3,8 +3,7 @@ import TickIcon from "../icons/TickIcon";
 
 interface AudioRecorderProps {
   isRecording: boolean;
-  onStopRecording: (base64Audio: string | null) => void;
-  onStopRecordingUrl: (data: any) => void;
+  onStopRecording: (data: any) => void;
   confirmIcon?: React.ReactNode;
   className?: string;
 }
@@ -12,7 +11,6 @@ interface AudioRecorderProps {
 const AudioRecorder: React.FC<AudioRecorderProps> = ({
   isRecording,
   onStopRecording,
-  onStopRecordingUrl,
   confirmIcon,
   className,
 }) => {
@@ -37,9 +35,8 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
     recorder.ondataavailable = async (event) => {
-      const base64Audio = await convertBlobToBase64(event.data);
-      onStopRecording(base64Audio);
-      onStopRecordingUrl(event.data);
+      // const base64Audio = await convertBlobToBase64(event.data);
+      onStopRecording(event.data);
     };
     recorder.start();
     setMediaRecorder(recorder);
@@ -55,17 +52,17 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     }
   };
 
-  const convertBlobToBase64 = (blob: Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        resolve(base64String);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  };
+  // const convertBlobToBase64 = (blob: Blob): Promise<string> => {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       const base64String = reader.result as string;
+  //       resolve(base64String);
+  //     };
+  //     reader.onerror = reject;
+  //     reader.readAsDataURL(blob);
+  //   });
+  // };
 
   useEffect(() => {
     if (isRecording && startTime) {
