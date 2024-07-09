@@ -1,8 +1,10 @@
+// FIXME - doesn't let upload same twice in sequence
+
 import React, { useEffect, useRef, useState } from "react";
 import EmojiPicker from "../EmojiPicker";
 import { sendMessage, useSubscribeToMessages } from "../services/chatService";
 import ChatBubble from "./ChatBubble";
-import { IMessageData } from "../types";
+import { IAttachment, IFile, IMessageData } from "../types";
 import SmileyIcon from "../icons/SmileyIcon";
 import SendMessageIcon from "../icons/SendMessageIcon";
 import MicIcon from "../icons/MicIcon";
@@ -10,6 +12,8 @@ import AudioRecorder from "../AudioRecorder/AudioRecorder";
 import CancelIcon from "../icons/CancelIcon";
 import AttachementIcon from "../icons/AttachementIcon";
 import FilesPreview from "./SelectedFiles/FilesPreview";
+import { v4 as uuid } from "uuid";
+import { convertBlobToBase64 } from "../helpers";
 
 interface ChatBoxProps {
   loggedInUser: string;
@@ -31,17 +35,31 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
   useSubscribeToMessages(receiverId, setMessages);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      const messageData: IMessageData = {
+    const messageId = uuid();
+
+    const attachments: IAttachment[] = await Promise.all(
+      selectedFiles.map(async (file: IFile) => {
+        return {
+          cloudId: await convertBlobToBase64(file.file as Blob),
+          name: file.name,
+        };
+      })
+    );
+
+    if (message.trim() || attachments.length) {
+      const messageData = {
+        id: messageId,
         senderId: currentUser,
         receiverId,
-        message: message,
-        type: "text",
+        content: message,
+        attachments,
       };
+      console.log(messageData);
       sendMessage(messageData);
       setMessage("");
+      setSelectedFiles([]);
       setShowEmojiPicker(false);
     }
   };
@@ -50,7 +68,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     setIsRecording(false);
     setSelectedFiles((prevFiles) => [
       {
-        name: "Unnamed Recording",
+        name: "Unnamed_Recording.webm", // as recorded audio is always webm
         type: recordedFile.type,
         url: URL.createObjectURL(recordedFile),
         size: recordedFile.size,
@@ -83,13 +101,48 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     );
   });
 
+  // UNCOMMENT TO ALLOW SAME FILE UPLOAD
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = Array.from(event.target.files || []);
+  //   const newFilePreviews = files.map((file) => {
+  //     const url = URL.createObjectURL(file as Blob);
+  //     return { name: file.name, type: file.type, url, size: file.size, file };
+  //   });
+  //   setSelectedFiles((prevPreviews) => [...prevPreviews, ...newFilePreviews]);
+  // };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const newFilePreviews = files.map((file) => {
+
+    // Filter out duplicates by checking unique properties
+    const uniqueFiles = files.filter((file) => {
+      return !selectedFiles.some(
+        (existingFile) =>
+          file.name === existingFile.name && file.size === existingFile.size
+      );
+    });
+
+    const newFilePreviews = uniqueFiles.map((file) => {
       const url = URL.createObjectURL(file as Blob);
       return { name: file.name, type: file.type, url, size: file.size, file };
     });
+
     setSelectedFiles((prevPreviews) => [...prevPreviews, ...newFilePreviews]);
+
+    // Alert user about duplicates
+    const duplicateFiles = files.filter((file) => !uniqueFiles.includes(file));
+    if (duplicateFiles.length > 0) {
+      alert(
+        `Duplicate files (${duplicateFiles
+          .map((file) => file.name)
+          .join(", ")}) were not added.`
+      );
+    }
+
+    // Clear input field to allow re-uploading same files
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleDrop = (event: React.DragEvent) => {
@@ -133,9 +186,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         {filteredMessages.map((messageData: IMessageData) => (
           <ChatBubble
             key={messageData.id}
-            message={messageData.message}
+            message={messageData.content}
+            attachments={messageData?.attachments}
             isSent={messageData.senderId === currentUser}
-            type={messageData.type === "audio" ? "audio" : "text"}
           />
         ))}
         <div ref={messagesEndRef} />

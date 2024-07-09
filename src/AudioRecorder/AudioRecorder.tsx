@@ -35,7 +35,6 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
     recorder.ondataavailable = async (event) => {
-      // const base64Audio = await convertBlobToBase64(event.data);
       onStopRecording(event.data);
     };
     recorder.start();
@@ -51,18 +50,6 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
       clearInterval(timerRef.current!);
     }
   };
-
-  // const convertBlobToBase64 = (blob: Blob): Promise<string> => {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       const base64String = reader.result as string;
-  //       resolve(base64String);
-  //     };
-  //     reader.onerror = reject;
-  //     reader.readAsDataURL(blob);
-  //   });
-  // };
 
   useEffect(() => {
     if (isRecording && startTime) {

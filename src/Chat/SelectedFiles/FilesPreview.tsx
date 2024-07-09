@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import CrossWithBlueCircleIcon from "../../icons/CrossWithBlueCircleIcon";
 import AudioPlayer from "../../AudioPlayer/AudioPlayer";
 import PdfIcon from "../../icons/pdfIcon";
