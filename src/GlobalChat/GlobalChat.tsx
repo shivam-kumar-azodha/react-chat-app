@@ -12,17 +12,20 @@ const GlobalChat = ({ loggedInUser }: { loggedInUser: string }) => {
 
   return (
     <div className="flex h-screen">
-      <ChatList
-        users={users.filter((user) => user !== loggedInUser)}
-        selectedUser={selectedUser}
-        onSelectUser={handleSelectUser}
-      />
-
-      <ChatBox
-        key={selectedUser}
-        loggedInUser={loggedInUser}
-        receiverId={selectedUser}
-      />
+      <div className="w-1/4">
+        <ChatList
+          users={users.filter((user) => user !== loggedInUser)}
+          selectedUser={selectedUser}
+          onSelectUser={handleSelectUser}
+        />
+      </div>
+      <div className="w-3/4">
+        <ChatBox
+          key={selectedUser}
+          loggedInUser={loggedInUser}
+          receiverId={selectedUser}
+        />
+      </div>
     </div>
   );
 };

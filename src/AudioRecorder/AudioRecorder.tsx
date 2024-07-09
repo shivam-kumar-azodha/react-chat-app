@@ -4,6 +4,7 @@ import TickIcon from "../icons/TickIcon";
 interface AudioRecorderProps {
   isRecording: boolean;
   onStopRecording: (base64Audio: string | null) => void;
+  onStopRecordingUrl: (data: any) => void;
   confirmIcon?: React.ReactNode;
   className?: string;
 }
@@ -11,6 +12,7 @@ interface AudioRecorderProps {
 const AudioRecorder: React.FC<AudioRecorderProps> = ({
   isRecording,
   onStopRecording,
+  onStopRecordingUrl,
   confirmIcon,
   className,
 }) => {
@@ -37,6 +39,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
     recorder.ondataavailable = async (event) => {
       const base64Audio = await convertBlobToBase64(event.data);
       onStopRecording(base64Audio);
+      onStopRecordingUrl(event.data);
     };
     recorder.start();
     setMediaRecorder(recorder);

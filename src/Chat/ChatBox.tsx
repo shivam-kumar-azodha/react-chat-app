@@ -10,6 +10,8 @@ import AudioPlayer from "../AudioPlayer/AudioPlayer";
 import CrossWithBlueCircleIcon from "../icons/CrossWithBlueCircleIcon";
 import AudioRecorder from "../AudioRecorder/AudioRecorder";
 import CancelIcon from "../icons/CancelIcon";
+import AttachementIcon from "../icons/AttachementIcon";
+import FilesPreview from "./SelectedFiles/FilesPreview";
 
 interface ChatBoxProps {
   loggedInUser: string;
@@ -23,8 +25,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<IMessageData[]>([]);
   const [isRecording, setIsRecording] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
   const [audioBlob, setAudioBlob] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<any>();
 
   useSubscribeToMessages(receiverId, setMessages);
@@ -50,6 +54,21 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     setAudioBlob(base64Audio);
   };
 
+  const handleAudioRecordingUrl = (recordedFile: Blob) => {
+    setIsRecording(false);
+    setSelectedFiles((prevFiles) => [
+      {
+        name: "Unnamed Recording",
+        type: recordedFile.type,
+        url: URL.createObjectURL(recordedFile),
+        size: recordedFile.size,
+        file: recordedFile,
+        isRecording: true,
+      },
+      ...prevFiles,
+    ]);
+  };
+
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -72,6 +91,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     );
   });
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    const newFilePreviews = files.map((file) => {
+      const url = URL.createObjectURL(file as Blob);
+      return { name: file.name, type: file.type, url, size: file.size, file };
+    });
+    setSelectedFiles((prevPreviews) => [...prevPreviews, ...newFilePreviews]);
+  };
+
   return (
     <div className="h-full p-4 flex flex-col w-full relative">
       <h1 className="text-lg font-bold mb-4">Chat with {receiverId}</h1>
@@ -86,7 +114,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div className="border border-red-500 flex flex-col p-3 gap-2">
+      <div className="border flex flex-col p-3 gap-2">
+        {!!selectedFiles?.length && (
+          <FilesPreview files={selectedFiles} setFiles={setSelectedFiles} />
+        )}
+
         {audioBlob && (
           <div className="rounded-md relative w-80 border p-2">
             <div
@@ -102,6 +134,26 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         )}
         <form onSubmit={handleSendMessage} className="flex relative gap-3">
           <div className="flex flex-row w-full pr-1 rounded-md">
+            {
+              <button
+                type="button"
+                className="cursor-pointer relative mr-2"
+                onClick={() => {
+                  fileInputRef.current?.click();
+                }}
+              >
+                <input
+                  id="file-input"
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*,audio/*,video/*,.pdf"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <AttachementIcon />
+              </button>
+            }
             <input
               ref={inputRef}
               value={message}
@@ -122,6 +174,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                 <AudioRecorder
                   isRecording={isRecording}
                   onStopRecording={handleStopRecording}
+                  onStopRecordingUrl={handleAudioRecordingUrl}
                   className="rounded-lg border-2 p-2 bg-white border-[#424BF9]"
                 />
               </div>

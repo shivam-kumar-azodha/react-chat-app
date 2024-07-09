@@ -12,7 +12,7 @@ const ChatList: React.FC<SidebarProps> = ({
   onSelectUser,
 }) => {
   return (
-    <div className="w-1/4 h-full bg-gray-100 p-4">
+    <div className="h-full bg-gray-100 p-4">
       <h2 className="text-xl font-bold mb-4">Chats</h2>
       {users.map((user) => (
         <div

@@ -27,7 +27,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isSent, type }) => {
         }`}
       >
         {type === "audio" ? (
-          <div className="w-80">
+          <div className="w-80 h-10">
             <AudioPlayer
               audioBlob={message as string}
               playButtonIcon={<PlayIconWhite />}

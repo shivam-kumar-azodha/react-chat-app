@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
 
 interface WaveformProps {
-  audioBlob: string;
+  audioBlob?: string;
+  audioUrl?: string;
   onReady: (duration: number) => void;
   onAudioProcess: (currentTime: number) => void;
   onFinish: () => void;
@@ -11,6 +12,7 @@ interface WaveformProps {
 
 const Waveform: React.FC<WaveformProps> = ({
   audioBlob,
+  audioUrl,
   onReady,
   onAudioProcess,
   onFinish,
@@ -32,7 +34,7 @@ const Waveform: React.FC<WaveformProps> = ({
         height: "auto",
       });
 
-      wavesurfer.current.load(audioBlob);
+      wavesurfer.current.load(audioBlob || audioUrl || "");
 
       wavesurfer.current.on("ready", () => {
         onReady(wavesurfer.current?.getDuration() || 0);
@@ -62,7 +64,7 @@ const Waveform: React.FC<WaveformProps> = ({
     }
   }, [isPlaying]);
 
-  return <div ref={waveformRef} className="w-full" />;
+  return <div ref={waveformRef} className="w-full h-full" />;
 };
 
 export default Waveform;

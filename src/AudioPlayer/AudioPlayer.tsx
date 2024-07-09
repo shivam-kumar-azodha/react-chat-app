@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import PlayIcon from "../icons/PlayIcon";
-import Waveform from "./WaveForm";
+
 import PauseIcon from "../icons/PauseIcon";
+import Waveform from "./Waveform";
 
 interface AudioPlayerProps {
-  audioBlob: string;
+  audioBlob?: string;
+  audioUrl?: string;
   playButtonIcon?: React.ReactNode;
   pauseButtonIcon?: React.ReactNode;
+  hideWaveForm?: boolean;
+  hideTimer?: boolean;
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
   audioBlob,
+  audioUrl,
   playButtonIcon,
   pauseButtonIcon,
+  hideWaveForm,
+  hideTimer,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -29,24 +36,31 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   return (
-    <div className="flex flex-row w-full items-center gap-2">
+    <div className="flex flex-row w-full items-center gap-2 h-full">
       <button onClick={handlePlayPause} className="cursor-pointer">
         {isPlaying
           ? pauseButtonIcon || <PauseIcon />
           : playButtonIcon || <PlayIcon />}
       </button>
-      <div className="flex-grow bg-slate-100 rounded-md p-1">
+      <div
+        className={`flex-grow bg-slate-100 rounded-md p-1 h-full ${
+          hideWaveForm ? "hidden" : ""
+        }`}
+      >
         <Waveform
-          audioBlob={audioBlob}
+          audioBlob={audioBlob || ""}
+          audioUrl={audioUrl || ""}
           isPlaying={isPlaying}
           onReady={setDuration}
           onAudioProcess={setCurrentTime}
           onFinish={() => setIsPlaying(false)}
         />
       </div>
-      <div className="text-sm ml-2">
-        {formatTime(currentTime)} / {formatTime(duration)}
-      </div>
+      {!hideTimer && (
+        <div className="text-sm ml-2">
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </div>
+      )}
     </div>
   );
 };
