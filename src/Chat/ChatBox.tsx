@@ -24,6 +24,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const [messages, setMessages] = useState<IMessageData[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<any>();
@@ -91,12 +92,42 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     setSelectedFiles((prevPreviews) => [...prevPreviews, ...newFilePreviews]);
   };
 
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(event.dataTransfer.files);
+    const newFilePreviews = files.map((file) => {
+      const url = URL.createObjectURL(file as Blob);
+      return { name: file.name, type: file.type, url, size: file.size, file };
+    });
+    setSelectedFiles((prevPreviews) => [...prevPreviews, ...newFilePreviews]);
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
   const showAttachmentButton = !(
     isRecording || selectedFiles.some((file) => file.isRecording)
   );
 
   return (
-    <div className="h-full p-4 flex flex-col w-full relative">
+    <div
+      className="h-full p-4 flex flex-col w-full relative"
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+    >
+      {isDragging && (
+        <div className="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center border-4 border-dashed border-gray-300">
+          <span className="text-gray-500 text-lg">Drop files here</span>
+        </div>
+      )}
       <h1 className="text-lg font-bold mb-4">Chat with {receiverId}</h1>
       <div className="flex-grow overflow-y-scroll border p-4 mb-4">
         {filteredMessages.map((messageData: IMessageData) => (
