@@ -1,5 +1,3 @@
-// FIXME - doesn't let upload same twice in sequence
-
 import React, { useEffect, useRef, useState } from "react";
 import EmojiPicker from "../EmojiPicker";
 import { sendMessage, useSubscribeToMessages } from "../services/chatService";
