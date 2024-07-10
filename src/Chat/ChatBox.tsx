@@ -9,9 +9,10 @@ import MicIcon from "../icons/MicIcon";
 import AudioRecorder from "../AudioRecorder/AudioRecorder";
 import CancelIcon from "../icons/CancelIcon";
 import AttachementIcon from "../icons/AttachementIcon";
-import FilesPreview from "./SelectedFiles/FilesPreview";
+import FilesPreview from "./FilesPreview/FilesPreview";
 import { v4 as uuid } from "uuid";
 import { convertBlobToBase64 } from "../helpers";
+import ChatTextInput from "./ChatTextInput";
 
 interface ChatBoxProps {
   loggedInUser: string;
@@ -27,9 +28,19 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const [isRecording, setIsRecording] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<any>();
+
+  useEffect(() => {
+    const urls = message.match(/https:\/\/[^\s]+/g);
+    if (urls && urls.length > 0) {
+      // const url = urls[0];
+      // setLinkPreview(url);
+    } else {
+      // setLinkPreview(null);
+    }
+  }, [message]);
 
   useSubscribeToMessages(receiverId, setMessages);
 
@@ -51,7 +62,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         id: messageId,
         senderId: currentUser,
         receiverId,
-        content: message,
+        content: JSON.stringify(message),
         attachments,
       };
       console.log(messageData);
@@ -167,6 +178,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     isRecording || selectedFiles.some((file) => file.isRecording)
   );
 
+  const handleInputBoxKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(e);
+    }
+  };
+
   return (
     <div
       className="h-full p-4 flex flex-col w-full relative"
@@ -197,7 +217,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         )}
 
         <form onSubmit={handleSendMessage} className="flex relative gap-3">
-          <div className="flex flex-row w-full pr-1 rounded-md">
+          <div className="flex flex-row w-full pr-1 rounded-md items-end">
             {showAttachmentButton && (
               <button
                 type="button"
@@ -219,14 +239,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({
               </button>
             )}
 
-            <input
-              ref={inputRef}
+            <ChatTextInput
+              inputRef={inputRef}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              autoComplete="off"
-              className="rounded-md flex-grow mr-2 p-2 focus:outline-none"
-              placeholder="Type a message"
+              onKeyDown={handleInputBoxKeyDown}
+              maxRows={3}
             />
+
             <button
               type="button"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}

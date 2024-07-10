@@ -31,10 +31,9 @@ export interface IEmojiPickerProps {
   skinTonesDisabled?: boolean;
   searchDisabled?: boolean;
   onEmojiClick?: (emoji: EmojiClickData, event: MouseEvent) => void;
-  inputRef?: React.RefObject<HTMLInputElement>;
   setInputValue?: React.Dispatch<React.SetStateAction<string>>;
   isForInputBox?: {
-    inputRef: React.RefObject<HTMLInputElement>;
+    inputRef: React.RefObject<HTMLTextAreaElement>;
     setInputValue: React.Dispatch<React.SetStateAction<string>>;
   };
   isForReactions?: {

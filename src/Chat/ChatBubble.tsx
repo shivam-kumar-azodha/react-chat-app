@@ -27,7 +27,7 @@ const renderAttachments = (attachments: IAttachment[]) => {
     switch (getFileTypeByExtension(attachment.name)) {
       case FileTypes.Audio:
         return (
-          <div className="w-80 h-10">
+          <div className="w-80 h-10" key={attachment.cloudId}>
             <AudioPlayer
               audioBlob={attachment.cloudId}
               playButtonIcon={<PlayIconWhite />}
@@ -38,6 +38,7 @@ const renderAttachments = (attachments: IAttachment[]) => {
       case FileTypes.Image:
         return (
           <img
+            key={attachment.cloudId}
             src={attachment.cloudId as unknown as string}
             alt={attachment.name}
             className="rounded-md h-30"
@@ -45,7 +46,7 @@ const renderAttachments = (attachments: IAttachment[]) => {
           />
         );
       case FileTypes.PDF:
-        return <PDFPreview file={attachment} />;
+        return <PDFPreview key={attachment.cloudId} file={attachment} />;
       default:
         return null;
     }
@@ -57,7 +58,16 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
   attachments,
   isSent,
 }) => {
-  const isOnlyEmoji = containsOnlyEmojis(message) && attachments?.length === 0;
+  let parsedMessage: string;
+  try {
+    parsedMessage = JSON.parse(message);
+  } catch (error) {
+    console.error("Failed to parse message:", error);
+    parsedMessage = message;
+  }
+
+  const isOnlyEmoji =
+    containsOnlyEmojis(parsedMessage) && attachments?.length === 0;
 
   return (
     <div className={`flex ${isSent ? "justify-end" : "justify-start"} mb-2`}>
@@ -66,14 +76,14 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
           isOnlyEmoji
             ? "text-4xl"
             : isSent
-            ? "bg-blue-500 px-4 py-2"
-            : "bg-gray-300 text-black px-4 py-2"
+            ? "bg-blue-500 px-4 py-2 text-base"
+            : "bg-gray-300 text-black px-4 py-2 text-base"
         }`}
       >
         <div className="mb-2">
           {attachments?.length === 1 && renderAttachments(attachments)}
         </div>
-        {message}
+        <pre className="font-sans">{parsedMessage}</pre>
       </div>
     </div>
   );
