@@ -9,3 +9,9 @@ export const convertBlobToBase64 = (blob: Blob): Promise<string> => {
     reader.readAsDataURL(blob);
   });
 };
+
+export const getLinksIntoArray = (message: string): string[] => {
+  const urlPattern =
+    /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?(?:\/\S*)?/g;
+  return message.match(urlPattern) || [];
+};

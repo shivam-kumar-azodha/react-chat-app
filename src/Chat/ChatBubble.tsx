@@ -4,11 +4,13 @@ import PlayIconWhite from "../icons/PlayIconWhite";
 import PauseIconWhite from "../icons/PauseIconWhite";
 import { FileTypeExtenions, FileTypes, IAttachment } from "../types";
 import PDFPreview from "./PDFPreview";
+import LinksPreview from "./LinksPreview/LinksPreview";
 
 type ChatBubbleProps = {
   message: string;
   attachments?: IAttachment[];
   isSent: boolean;
+  linksInMessage?: string[];
 };
 
 const containsOnlyEmojis = (message: string) =>
@@ -57,6 +59,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
   message,
   attachments,
   isSent,
+  linksInMessage,
 }) => {
   let parsedMessage: string;
   try {
@@ -84,6 +87,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
           {attachments?.length === 1 && renderAttachments(attachments)}
         </div>
         <pre className="font-sans">{parsedMessage}</pre>
+        {!!linksInMessage?.length && <LinksPreview links={linksInMessage} />}
       </div>
     </div>
   );

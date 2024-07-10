@@ -11,8 +11,9 @@ import CancelIcon from "../icons/CancelIcon";
 import AttachementIcon from "../icons/AttachementIcon";
 import FilesPreview from "./FilesPreview/FilesPreview";
 import { v4 as uuid } from "uuid";
-import { convertBlobToBase64 } from "../helpers";
+import { convertBlobToBase64, getLinksIntoArray } from "../helpers";
 import ChatTextInput from "./ChatTextInput";
+import LinksPreview from "./LinksPreview/LinksPreview";
 
 interface ChatBoxProps {
   loggedInUser: string;
@@ -24,6 +25,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   receiverId,
 }) => {
   const [message, setMessage] = useState("");
+  const [linksWithinInput, setLinksWithinInput] = useState<string[]>([]);
   const [messages, setMessages] = useState<IMessageData[]>([]);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
@@ -33,13 +35,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const messagesEndRef = useRef<any>();
 
   useEffect(() => {
-    const urls = message.match(/https:\/\/[^\s]+/g);
-    if (urls && urls.length > 0) {
-      // const url = urls[0];
-      // setLinkPreview(url);
-    } else {
-      // setLinkPreview(null);
-    }
+    const links = getLinksIntoArray(message);
+    setLinksWithinInput(links);
   }, [message]);
 
   useSubscribeToMessages(receiverId, setMessages);
@@ -207,6 +204,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             message={messageData.content}
             attachments={messageData?.attachments}
             isSent={messageData.senderId === currentUser}
+            linksInMessage={getLinksIntoArray(messageData.content)}
           />
         ))}
         <div ref={messagesEndRef} />
@@ -288,6 +286,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             />
           </div>
         </form>
+
+        {!!linksWithinInput.length && <LinksPreview links={linksWithinInput} />}
       </div>
     </div>
   );
