@@ -1,18 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
+import clsx from "clsx";
 import TickIcon from "../icons/TickIcon";
-
-interface AudioRecorderProps {
-  isRecording: boolean;
-  onStopRecording: (data: any) => void;
-  confirmIcon?: React.ReactNode;
-  className?: string;
-}
+import { AudioRecorderProps } from "./__types__/AudioRecorder.types";
 
 const AudioRecorder: React.FC<AudioRecorderProps> = ({
   isRecording,
   onStopRecording,
   confirmIcon,
   className,
+  timerClassName,
+  buttonClassName,
 }) => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
@@ -34,7 +31,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     const recorder = new MediaRecorder(stream);
-    recorder.ondataavailable = async (event) => {
+    recorder.ondataavailable = (event) => {
       onStopRecording(event.data);
     };
     recorder.start();
@@ -70,12 +67,23 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   };
 
   return (
-    <div className={`flex w-full items-center justify-between ${className}`}>
-      <div className="flex flex-grow rounded-md bg-gray-100 p-2 text-sm">
+    <div
+      className={clsx("flex w-full items-center justify-between", className)}
+    >
+      <div
+        className={clsx(
+          "flex flex-grow rounded-md bg-gray-100 p-2 text-sm",
+          // @TODO: move timer classname to appropriate place once live waveform is enabled
+          timerClassName,
+        )}
+      >
         <span className="flex-grow">Recording...</span>
-        <span className="">{formatTime(elapsedTime)}</span>
+        <span>{formatTime(elapsedTime)}</span>
       </div>
-      <button onClick={stopRecording} className="ml-2 p-2">
+      <button
+        onClick={stopRecording}
+        className={clsx("ml-2 p-2", buttonClassName)}
+      >
         {confirmIcon || <TickIcon />}
       </button>
     </div>
