@@ -5,7 +5,7 @@ import { IMessageData } from "../types";
 // Hook to subscribe to messages
 export const useSubscribeToMessages = (
   userId: string,
-  setMessages: React.Dispatch<React.SetStateAction<IMessageData[]>>
+  setMessages: React.Dispatch<React.SetStateAction<IMessageData[]>>,
 ) => {
   useEffect(() => {
     socket.emit("joinRoom", userId);

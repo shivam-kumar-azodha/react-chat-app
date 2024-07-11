@@ -27,7 +27,7 @@ const ChatTextInput: React.FC<InputTextAreaProps> = ({
       autoComplete="off"
       minRows={minRows}
       maxRows={maxRows}
-      className="flex-grow focus:outline-none resize-none"
+      className="flex-grow resize-none focus:outline-none"
       placeholder="Type a message"
     />
   );

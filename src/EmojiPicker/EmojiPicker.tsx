@@ -53,7 +53,7 @@ const EmojiPicker: React.FC<IEmojiPickerProps> = ({
                 inputRef.current.focus();
                 inputRef.current.setSelectionRange(
                   newCursorPosition,
-                  newCursorPosition
+                  newCursorPosition,
                 );
               }
             }, 0);
@@ -62,7 +62,7 @@ const EmojiPicker: React.FC<IEmojiPickerProps> = ({
           });
       }
     },
-    [inputRef, setInputValue]
+    [inputRef, setInputValue],
   );
 
   const onEmojiClickHandler = isForInputBox

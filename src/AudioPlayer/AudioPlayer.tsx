@@ -36,14 +36,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   return (
-    <div className="flex flex-row w-full items-center gap-2 h-full">
+    <div className="flex h-full w-full flex-row items-center gap-2">
       <button onClick={handlePlayPause} className="cursor-pointer">
         {isPlaying
           ? pauseButtonIcon || <PauseIcon />
           : playButtonIcon || <PlayIcon />}
       </button>
       <div
-        className={`flex-grow bg-slate-100 rounded-md p-1 h-full ${
+        className={`h-full flex-grow rounded-md bg-slate-100 p-1 ${
           hideWaveForm ? "hidden" : ""
         }`}
       >
@@ -57,7 +57,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         />
       </div>
       {!hideTimer && (
-        <div className="text-sm ml-2">
+        <div className="ml-2 text-sm">
           {formatTime(currentTime)} / {formatTime(duration)}
         </div>
       )}

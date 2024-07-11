@@ -9,7 +9,7 @@ const LinksPreview = ({
   linkPreviewVariant?: LinkPreviewVariant;
 }) => {
   return (
-    <div className="flex gap-x-3 items-center overflow-scroll">
+    <div className="flex items-center gap-x-3 overflow-scroll">
       {links.map((link, index) => (
         <LinkPreview key={index} url={link} variant={linkPreviewVariant} />
       ))}

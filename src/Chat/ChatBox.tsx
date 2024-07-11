@@ -56,7 +56,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           cloudId: await convertBlobToBase64(file.file as Blob),
           name: file.name,
         };
-      })
+      }),
     );
 
     if (message.trim() || attachments.length) {
@@ -100,7 +100,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
   if (!receiverId)
     return (
-      <div className="flex w-full h-full justify-center items-center">
+      <div className="flex h-full w-full items-center justify-center">
         Select a chat
       </div>
     );
@@ -129,7 +129,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     const uniqueFiles = files.filter((file) => {
       return !selectedFiles.some(
         (existingFile) =>
-          file.name === existingFile.name && file.size === existingFile.size
+          file.name === existingFile.name && file.size === existingFile.size,
       );
     });
 
@@ -146,7 +146,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       alert(
         `Duplicate files (${duplicateFiles
           .map((file) => file.name)
-          .join(", ")}) were not added.`
+          .join(", ")}) were not added.`,
       );
     }
 
@@ -181,7 +181,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   );
 
   const handleInputBoxKeyDown = (
-    e: React.KeyboardEvent<HTMLTextAreaElement>
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
   ) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -191,18 +191,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
   return (
     <div
-      className="h-full p-4 flex flex-col w-full relative"
+      className="relative flex h-full w-full flex-col p-4"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
     >
       {isDragging && (
-        <div className="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center border-4 border-dashed border-gray-300">
-          <span className="text-gray-500 text-lg">Drop files here</span>
+        <div className="absolute inset-0 z-10 flex items-center justify-center border-4 border-dashed border-gray-300 bg-white bg-opacity-80">
+          <span className="text-lg text-gray-500">Drop files here</span>
         </div>
       )}
-      <h1 className="text-lg font-bold mb-4">Chat with {receiverId}</h1>
-      <div className="flex-grow overflow-y-scroll border p-4 mb-4">
+      <h1 className="mb-4 text-lg font-bold">Chat with {receiverId}</h1>
+      <div className="mb-4 flex-grow overflow-y-scroll border p-4">
         {filteredMessages.map((messageData: IMessageData) => (
           <ChatBubble
             key={messageData.id}
@@ -214,17 +214,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <div className="border flex flex-col px-3 py-2 gap-2">
+      <div className="flex flex-col gap-2 border px-3 py-2">
         {!!selectedFiles?.length && (
           <FilesPreview files={selectedFiles} setFiles={setSelectedFiles} />
         )}
 
-        <form onSubmit={handleSendMessage} className="flex relative gap-3">
-          <div className="flex flex-row w-full pr-1 rounded-md items-end">
+        <form onSubmit={handleSendMessage} className="relative flex gap-3">
+          <div className="flex w-full flex-row items-end rounded-md pr-1">
             {showAttachmentButton && (
               <button
                 type="button"
-                className="cursor-pointer relative mr-2"
+                className="relative mr-2 cursor-pointer"
                 onClick={() => {
                   fileInputRef.current?.click();
                 }}
@@ -258,11 +258,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
               <SmileyIcon />
             </button>
             {isRecording && (
-              <div className="w-80 absolute bottom-10 right-0">
+              <div className="absolute bottom-10 right-0 w-80">
                 <AudioRecorder
                   isRecording={isRecording}
                   onStopRecording={handleAudioRecording}
-                  className="rounded-lg border-2 p-2 bg-white border-[#424BF9]"
+                  className="rounded-lg border-2 border-[#424BF9] bg-white p-2"
                 />
               </div>
             )}
@@ -281,7 +281,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             )}
           </div>
           <div
-            className={`z-10 absolute h-96 w-80 bottom-full mb-2 right-10 ${
+            className={`absolute bottom-full right-10 z-10 mb-2 h-96 w-80 ${
               showEmojiPicker ? "block" : "hidden"
             }`}
           >

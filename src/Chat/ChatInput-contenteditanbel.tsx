@@ -21,7 +21,7 @@ const ChatTextInput: React.FC<ChatTextInputProps> = ({ value, onChange }) => {
       return text.replace(
         urlRegex,
         (url) =>
-          `<a href="${url}" target="_blank" style="color: blue;">${url}</a>`
+          `<a href="${url}" target="_blank" style="color: blue;">${url}</a>`,
       );
     };
 
@@ -35,7 +35,7 @@ const ChatTextInput: React.FC<ChatTextInputProps> = ({ value, onChange }) => {
       ref={inputRef}
       contentEditable
       onInput={handleInput}
-      className="rounded-md w-full focus:outline-none p-2"
+      className="w-full rounded-md p-2 focus:outline-none"
       style={{
         minHeight: "50px",
         border: "1px solid #ccc",

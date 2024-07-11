@@ -30,7 +30,7 @@ const ImagePreview = ({ file }: any) => {
     <img
       src={imageSrc}
       alt={file.name}
-      className="w-16 h-16 object-cover rounded-md"
+      className="h-16 w-16 rounded-md object-cover"
       onError={handleError}
     />
   );

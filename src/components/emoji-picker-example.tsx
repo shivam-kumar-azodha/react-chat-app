@@ -17,10 +17,10 @@ const EmojiPickerExample = () => {
         ref={inputRef}
         value={inputValue}
         onChange={handleInputChange}
-        className="rounded-md w-80 p-2 mr-2"
+        className="mr-2 w-80 rounded-md p-2"
       />
       {showEmojiPicker && (
-        <div className="z-10 absolute h-96 w-96">
+        <div className="absolute z-10 h-96 w-96">
           <EmojiPicker
             open={showEmojiPicker}
             isForInputBox={{ inputRef, setInputValue }}

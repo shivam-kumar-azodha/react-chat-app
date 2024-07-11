@@ -9,16 +9,16 @@ const App: React.FC = () => {
   return (
     // DoropDOwn to select loggedin User
     <div className="grid grid-cols-2">
-      <div className="border min-h-60 p-4">
+      <div className="min-h-60 border p-4">
         <EmojiPickerExample />
       </div>
-      <div className="border min-h-60 p-4">
+      <div className="min-h-60 border p-4">
         <AudioRecorderExample />
       </div>
       {/* <div className="border min-h-60 p-4 row-span-2">
         <ChatBox loggedInUser="Alice" receiverId="Bob" />
       </div> */}
-      <div className="h-96 col-span-2">
+      <div className="col-span-2 h-96">
         <h1>{loggedInUser}</h1>
         <select onChange={(e) => setLoggedInUser(e.target.value)}>
           <option value="Alice">Alice</option>

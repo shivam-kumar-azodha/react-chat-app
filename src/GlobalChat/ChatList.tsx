@@ -13,11 +13,11 @@ const ChatList: React.FC<SidebarProps> = ({
 }) => {
   return (
     <div className="h-full bg-gray-100 p-4">
-      <h2 className="text-xl font-bold mb-4">Chats</h2>
+      <h2 className="mb-4 text-xl font-bold">Chats</h2>
       {users.map((user) => (
         <div
           key={user}
-          className={`p-2 cursor-pointer ${
+          className={`cursor-pointer p-2 ${
             user === selectedUser ? "bg-gray-300" : ""
           }`}
           onClick={() => {

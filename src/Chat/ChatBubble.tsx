@@ -29,7 +29,7 @@ const renderAttachments = (attachments: IAttachment[]) => {
     switch (getFileTypeByExtension(attachment.name)) {
       case FileTypes.Audio:
         return (
-          <div className="w-80 h-10" key={attachment.cloudId}>
+          <div className="h-10 w-80" key={attachment.cloudId}>
             <AudioPlayer
               audioBlob={attachment.cloudId}
               playButtonIcon={<PlayIconWhite />}
@@ -43,7 +43,7 @@ const renderAttachments = (attachments: IAttachment[]) => {
             key={attachment.cloudId}
             src={attachment.cloudId as unknown as string}
             alt={attachment.name}
-            className="rounded-md h-30"
+            className="h-30 rounded-md"
             draggable={false}
           />
         );
@@ -75,12 +75,12 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
   return (
     <div className={`flex ${isSent ? "justify-end" : "justify-start"} mb-2`}>
       <div
-        className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg text-white ${
+        className={`max-w-xs rounded-lg text-white md:max-w-md lg:max-w-lg ${
           isOnlyEmoji
             ? "text-4xl"
             : isSent
-            ? "bg-blue-500 px-4 py-2 text-base"
-            : "bg-gray-300 text-black px-4 py-2 text-base"
+              ? "bg-blue-500 px-4 py-2 text-base"
+              : "bg-gray-300 px-4 py-2 text-base text-black"
         }`}
       >
         <div className="mb-2">

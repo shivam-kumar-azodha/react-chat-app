@@ -15,7 +15,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   className,
 }) => {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
+    null,
   );
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -70,8 +70,8 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({
   };
 
   return (
-    <div className={`flex items-center justify-between w-full ${className}`}>
-      <div className="flex-grow flex bg-gray-100 rounded-md p-2 text-sm">
+    <div className={`flex w-full items-center justify-between ${className}`}>
+      <div className="flex flex-grow rounded-md bg-gray-100 p-2 text-sm">
         <span className="flex-grow">Recording...</span>
         <span className="">{formatTime(elapsedTime)}</span>
       </div>

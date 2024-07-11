@@ -34,8 +34,8 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_GET_META_DATA_URL}/?url=${encodeURIComponent(
-            url
-          )}`
+            url,
+          )}`,
         );
         console.log(response);
         setMetadata(response.data);
@@ -66,25 +66,25 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
       return (
         <a
           href="#"
-          className="flex flex-row bg-white rounded-lg shadow hover:bg-gray-100 "
+          className="flex flex-row rounded-lg bg-white shadow hover:bg-gray-100"
         >
           {metadata.image && (
-            <div className="flex justify-center items-center overflow-hidden w-16">
+            <div className="flex w-16 items-center justify-center overflow-hidden">
               <img
-                className="w-full h-full object-cover rounded-l-md"
+                className="h-full w-full rounded-l-md object-cover"
                 src={metadata.image}
                 alt=""
               />
             </div>
           )}
-          <div className="flex flex-col py-1 px-2 leading-normal gap-1">
+          <div className="flex flex-col gap-1 px-2 py-1 leading-normal">
             {metadata.title && (
-              <h5 className="text-xs font-semibold text-gray-900 line-clamp-1">
+              <h5 className="line-clamp-1 text-xs font-semibold text-gray-900">
                 {metadata.title}
               </h5>
             )}
             {metadata.description && (
-              <p className="font-semibold flex-grow text-[10px] text-gray-700 line-clamp-2">
+              <p className="line-clamp-2 flex-grow text-[10px] font-semibold text-gray-700">
                 {metadata.description}
               </p>
             )}
@@ -93,7 +93,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
                 href={metadata.url || url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-500 text-xs truncate justify-end"
+                className="justify-end truncate text-xs text-blue-500"
               >
                 {metadata.url || url}
               </a>
@@ -105,7 +105,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
     default: {
       return (
         <div
-          className="flex flex-col border rounded-md p-1 gap-y-1 cursor-pointer bg-white text-black hover:bg-gray-100 transition-colors"
+          className="flex cursor-pointer flex-col gap-y-1 rounded-md border bg-white p-1 text-black transition-colors hover:bg-gray-100"
           onClick={() => {
             window.open(metadata.url || url, "_blank");
           }}
@@ -118,7 +118,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
                 className="h-6 w-6 rounded-md"
               />
             )}
-            <span className="text-sm font-medium line-clamp-1 max-w-40">
+            <span className="line-clamp-1 max-w-40 text-sm font-medium">
               {metadata.title}
             </span>
           </div>
@@ -128,7 +128,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
               href={metadata.url || url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-500 max-w-48 truncate text-sm"
+              className="max-w-48 truncate text-sm text-blue-500"
             >
               {metadata.url || url}
             </a>

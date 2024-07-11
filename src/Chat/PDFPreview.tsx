@@ -13,14 +13,14 @@ const PDFPreview = ({ file }: { file: IAttachment }) => {
   return (
     <div className="flex flex-col items-start rounded-lg border-2 border-slate-600">
       <div>
-        <div className="relative overflow-hidden rounded-t-lg h-40">
+        <div className="relative h-40 overflow-hidden rounded-t-lg">
           <iframe
             src={file.cloudId}
-            className="absolute w-full h-full scale-110 pointer-events-none"
+            className="pointer-events-none absolute h-full w-full scale-110"
           />
         </div>
         <div
-          className="flex gap-2 bg-slate-600 p-2 items-center cursor-pointer"
+          className="flex cursor-pointer items-center gap-2 bg-slate-600 p-2"
           onClick={handleDownload}
         >
           <PdfIcon />

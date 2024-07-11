@@ -64,7 +64,7 @@ const Waveform: React.FC<WaveformProps> = ({
     }
   }, [isPlaying]);
 
-  return <div ref={waveformRef} className="w-full h-full" />;
+  return <div ref={waveformRef} className="h-full w-full" />;
 };
 
 export default Waveform;

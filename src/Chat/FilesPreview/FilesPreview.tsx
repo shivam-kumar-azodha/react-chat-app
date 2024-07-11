@@ -43,10 +43,10 @@ const FilesPreview = ({ files, setFiles }: any) => {
             <img
               src={file.url}
               alt={file.name}
-              className="rounded-md h-10 w-10"
+              className="h-10 w-10 rounded-md"
             />
             <div className="flex flex-col justify-center">
-              <span className="text-sm font-medium line-clamp-1 max-w-48">
+              <span className="line-clamp-1 max-w-48 text-sm font-medium">
                 {file.name}
               </span>
               <span className="text-xs text-gray-500">
@@ -60,7 +60,7 @@ const FilesPreview = ({ files, setFiles }: any) => {
         if (file.isRecording)
           return (
             <div className="flex">
-              <div className="flex items-center justify-center w-60">
+              <div className="flex w-60 items-center justify-center">
                 <AudioPlayer audioUrl={file.url} />
               </div>
             </div>
@@ -71,7 +71,7 @@ const FilesPreview = ({ files, setFiles }: any) => {
               <AudioPlayer audioUrl={file.url} hideWaveForm hideTimer />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-sm font-medium line-clamp-1 max-w-48">
+              <span className="line-clamp-1 max-w-48 text-sm font-medium">
                 {file.name}
               </span>
               <span className="text-xs text-gray-500">
@@ -88,7 +88,7 @@ const FilesPreview = ({ files, setFiles }: any) => {
               <p>V Icon</p>
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-sm font-medium line-clamp-1 max-w-48">
+              <span className="line-clamp-1 max-w-48 text-sm font-medium">
                 {file.name}
               </span>
               <span className="text-xs text-gray-500">
@@ -105,7 +105,7 @@ const FilesPreview = ({ files, setFiles }: any) => {
               <PdfIcon />
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-sm font-medium line-clamp-1 max-w-48">
+              <span className="line-clamp-1 max-w-48 text-sm font-medium">
                 {file.name}
               </span>
               <span className="text-xs text-gray-500">
@@ -121,14 +121,14 @@ const FilesPreview = ({ files, setFiles }: any) => {
   };
 
   return (
-    <div className="flex p-2 gap-x-3 items-center overflow-scroll">
+    <div className="flex items-center gap-x-3 overflow-scroll p-2">
       {files.map((file: any, index: any) => (
-        <div key={index} className="border p-2 rounded relative min-w-fit">
+        <div key={index} className="relative min-w-fit rounded border p-2">
           <div
-            className="top-0 right-0 absolute z-10 cursor-pointer -mr-2 -mt-2"
+            className="absolute right-0 top-0 z-10 -mr-2 -mt-2 cursor-pointer"
             onClick={() => {
               setFiles((prevFiles: any) =>
-                prevFiles.filter((_: any, i: any) => i !== index)
+                prevFiles.filter((_: any, i: any) => i !== index),
               );
             }}
           >
