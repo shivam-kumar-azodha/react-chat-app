@@ -1,4 +1,5 @@
 import { EmojiClickData } from "emoji-picker-react";
+import React from "react";
 
 export enum EmojiStyle {
   NATIVE = "native",
@@ -19,7 +20,7 @@ export enum EmojiTheme {
   AUTO = "auto",
 }
 
-export interface IEmojiPickerProps {
+export interface IEmojiPickerBaseProps {
   open: boolean;
   height?: string | number;
   width?: string | number;
@@ -30,15 +31,26 @@ export interface IEmojiPickerProps {
   suggestedEmojisMode?: SuggestionMode;
   skinTonesDisabled?: boolean;
   searchDisabled?: boolean;
-  onEmojiClick?: (emoji: EmojiClickData, event: MouseEvent) => void;
-  setInputValue?: React.Dispatch<React.SetStateAction<string>>;
-  isForInputBox?: {
+}
+
+export interface IEmojiPickerForInputProps extends IEmojiPickerBaseProps {
+  isForInputBox: {
     inputRef: React.RefObject<HTMLTextAreaElement>;
     setInputValue: React.Dispatch<React.SetStateAction<string>>;
   };
-  isForReactions?: {
+  isForReactions?: never; // Ensures this property cannot be set when isForInputBox is present
+}
+
+export interface IEmojiPickerForReactionsProps extends IEmojiPickerBaseProps {
+  isForReactions: {
     onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
     allowExpandReactions?: boolean;
     reactions?: string[];
   };
+  isForInputBox?: never; // Ensures this property cannot be set when isForReactions is present
 }
+
+// Union type of the above two interfaces
+export type IEmojiPickerProps =
+  | IEmojiPickerForInputProps
+  | IEmojiPickerForReactionsProps;

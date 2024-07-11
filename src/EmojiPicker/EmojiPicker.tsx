@@ -4,11 +4,11 @@ import EmojiPickerLib, {
   Theme as LibEmojiTheme,
 } from "emoji-picker-react";
 import {
-  EmojiStyle,
-  EmojiTheme,
   IEmojiPickerProps,
+  EmojiTheme,
+  EmojiStyle,
   SuggestionMode,
-} from "./EmojiPicker.types";
+} from "./__types__/EmojiPicker.types";
 
 const EmojiPicker: React.FC<IEmojiPickerProps> = ({
   open,
@@ -33,7 +33,6 @@ const EmojiPicker: React.FC<IEmojiPickerProps> = ({
       if (inputRef?.current) {
         const { selectionStart, selectionEnd } = inputRef.current;
 
-        // Use a functional update to ensure we're working with the most current state
         setInputValue &&
           setInputValue((currentInputStr: string) => {
             // Insert emoji into current input value at cursor position
