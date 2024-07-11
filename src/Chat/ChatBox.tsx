@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import EmojiPicker from "../EmojiPicker";
 import { sendMessage, useSubscribeToMessages } from "../services/chatService";
-import ChatBubble from "./ChatBubble";
+import ChatBubble from "./ChatBubble/ChatBubble";
 import { IAttachment, IFile, IMessageData } from "../types";
 import SmileyIcon from "../icons/SmileyIcon";
 import SendMessageIcon from "../icons/SendMessageIcon";
@@ -9,11 +9,11 @@ import MicIcon from "../icons/MicIcon";
 import AudioRecorder from "../AudioRecorder/AudioRecorder";
 import CancelIcon from "../icons/CancelIcon";
 import AttachementIcon from "../icons/AttachementIcon";
-import FilesPreview from "./FilesPreview/FilesPreview";
+import FilesPreview from "../FilesPreview/FilesPreview";
 import { v4 as uuid } from "uuid";
 import { convertBlobToBase64, getLinksIntoArray } from "../helpers";
 import ChatTextInput from "./ChatTextInput";
-import LinksPreview from "./LinksPreview/LinksPreview";
+import LinksPreview from "../LinksPreview/LinksPreview";
 
 interface ChatBoxProps {
   loggedInUser: string;

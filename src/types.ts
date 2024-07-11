@@ -27,7 +27,7 @@ export enum FileTypes {
   PDF = "pdf",
 }
 
-export const FileTypeExtenions = {
+export const FileTypeExtensions = {
   [FileTypes.Audio]: ["mp3", "wav", "ogg", "webm"],
   [FileTypes.Video]: ["mp4", "mov", "avi"],
   [FileTypes.Image]: ["jpg", "jpeg", "png"],

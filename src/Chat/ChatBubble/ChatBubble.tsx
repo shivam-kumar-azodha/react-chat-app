@@ -1,28 +1,16 @@
 import React from "react";
-import AudioPlayer from "../AudioPlayer/AudioPlayer";
-import PlayIconWhite from "../icons/PlayIconWhite";
-import PauseIconWhite from "../icons/PauseIconWhite";
-import { FileTypeExtenions, FileTypes, IAttachment } from "../types";
-import PDFPreview from "./PDFPreview";
-import LinksPreview from "./LinksPreview/LinksPreview";
 
-type ChatBubbleProps = {
-  message: string;
-  attachments?: IAttachment[];
-  isSent: boolean;
-  linksInMessage?: string[];
-};
-
-const containsOnlyEmojis = (message: string) =>
-  message.match(/^(?:\p{Emoji_Presentation}|\p{Extended_Pictographic})+$/u);
-
-const getFileTypeByExtension = (name: string) => {
-  const extension = name.split(".").pop();
-  if (!extension) return undefined;
-  for (const [fileType, extensions] of Object.entries(FileTypeExtenions)) {
-    if (extensions.includes(extension)) return fileType;
-  }
-};
+import PlayIconWhite from "../../icons/PlayIconWhite";
+import PauseIconWhite from "../../icons/PauseIconWhite";
+import PDFPreview from "../../FilesPreview/PDFPreview";
+import LinksPreview from "../../LinksPreview/LinksPreview";
+import AudioPlayer from "../../AudioPlayer/AudioPlayer";
+import {
+  ChatBubbleProps,
+  containsOnlyEmojis,
+  getFileTypeByExtension,
+} from "./__types__/ChatBubble.types";
+import { FileTypes, IAttachment } from "../../types";
 
 const renderAttachments = (attachments: IAttachment[]) => {
   return attachments.map((attachment) => {
@@ -73,7 +61,10 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
     containsOnlyEmojis(parsedMessage) && attachments?.length === 0;
 
   return (
-    <div className={`flex ${isSent ? "justify-end" : "justify-start"} mb-2`}>
+    // TODO: Handle overflow better
+    <div
+      className={`flex ${isSent ? "justify-end" : "justify-start"} mb-2 overflow-x-clip`}
+    >
       <div
         className={`max-w-xs rounded-lg text-white md:max-w-md lg:max-w-lg ${
           isOnlyEmoji

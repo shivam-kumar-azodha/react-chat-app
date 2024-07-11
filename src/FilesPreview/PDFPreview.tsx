@@ -8,7 +8,10 @@ const PDFPreview = ({ file }: { file: IAttachment }) => {
     link.href = file.cloudId;
     link.download = file.name;
     link.click();
+    link.remove();
   };
+
+  // @TODO: Create variants
 
   return (
     <div className="flex flex-col items-start rounded-lg border-2 border-slate-600">

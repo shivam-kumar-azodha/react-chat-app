@@ -1,8 +1,9 @@
 import React from "react";
-import AudioPlayer from "../../AudioPlayer/AudioPlayer";
-import PdfIcon from "../../icons/pdfIcon";
+
 import { FilePreviewProps, FileType } from "./__types__/FilesPreview.types";
 import ImagePreview from "./ImagePreview";
+import AudioPlayer from "../AudioPlayer/AudioPlayer";
+import PdfIcon from "../icons/pdfIcon";
 
 const getFormattedFileSize = (size: number) => {
   const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));

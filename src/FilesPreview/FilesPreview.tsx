@@ -1,11 +1,11 @@
 import React from "react";
 import clsx from "clsx";
-import CrossWithBlueCircleIcon from "../../icons/CrossWithBlueCircleIcon";
 import {
   FilesPreviewProps,
   FilePreviewData,
 } from "./__types__/FilesPreview.types";
 import FilePreview from "./FilePreview";
+import CrossWithBlueCircleIcon from "../icons/CrossWithBlueCircleIcon";
 
 const FilesPreview: React.FC<FilesPreviewProps> = ({
   files,
