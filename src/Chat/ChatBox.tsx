@@ -35,8 +35,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const messagesEndRef = useRef<any>();
 
   useEffect(() => {
-    const links = getLinksIntoArray(message);
-    setLinksWithinInput(links);
+    const debounceDelay = 500;
+    const timer = setTimeout(() => {
+      const links = getLinksIntoArray(message);
+      setLinksWithinInput(links);
+    }, debounceDelay);
+
+    return () => clearTimeout(timer);
   }, [message]);
 
   useSubscribeToMessages(receiverId, setMessages);
