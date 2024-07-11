@@ -1,17 +1,9 @@
 import React, { useState } from "react";
+import clsx from "clsx";
 import PlayIcon from "../icons/PlayIcon";
-
 import PauseIcon from "../icons/PauseIcon";
 import Waveform from "./Waveform";
-
-interface AudioPlayerProps {
-  audioBlob?: string;
-  audioUrl?: string;
-  playButtonIcon?: React.ReactNode;
-  pauseButtonIcon?: React.ReactNode;
-  hideWaveForm?: boolean;
-  hideTimer?: boolean;
-}
+import { AudioPlayerProps } from "./__types__/AudioPlayer.types";
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
   audioBlob,
@@ -20,6 +12,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   pauseButtonIcon,
   hideWaveForm,
   hideTimer,
+  className,
+  buttonClassName,
+  waveformClassName,
+  timerClassName,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -36,16 +32,26 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   return (
-    <div className="flex h-full w-full flex-row items-center gap-2">
-      <button onClick={handlePlayPause} className="cursor-pointer">
+    <div
+      className={clsx(
+        "flex h-full w-full flex-row items-center gap-2",
+        className,
+      )}
+    >
+      <button
+        onClick={handlePlayPause}
+        className={clsx("cursor-pointer", buttonClassName)}
+      >
         {isPlaying
           ? pauseButtonIcon || <PauseIcon />
           : playButtonIcon || <PlayIcon />}
       </button>
       <div
-        className={`h-full flex-grow rounded-md bg-slate-100 p-1 ${
-          hideWaveForm ? "hidden" : ""
-        }`}
+        className={clsx(
+          "h-full flex-grow rounded-md bg-slate-100 p-1",
+          { hidden: hideWaveForm },
+          waveformClassName,
+        )}
       >
         <Waveform
           audioBlob={audioBlob || ""}
@@ -57,7 +63,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
         />
       </div>
       {!hideTimer && (
-        <div className="ml-2 text-sm">
+        <div className={clsx("ml-2 text-sm", timerClassName)}>
           {formatTime(currentTime)} / {formatTime(duration)}
         </div>
       )}

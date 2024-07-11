@@ -1,14 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
-
-interface WaveformProps {
-  audioBlob?: string;
-  audioUrl?: string;
-  onReady: (duration: number) => void;
-  onAudioProcess: (currentTime: number) => void;
-  onFinish: () => void;
-  isPlaying: boolean;
-}
+import { WaveformProps } from "./__types__/Waveform.types";
+import clsx from "clsx";
 
 const Waveform: React.FC<WaveformProps> = ({
   audioBlob,
@@ -17,6 +10,7 @@ const Waveform: React.FC<WaveformProps> = ({
   onAudioProcess,
   onFinish,
   isPlaying,
+  className,
 }) => {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
@@ -64,7 +58,7 @@ const Waveform: React.FC<WaveformProps> = ({
     }
   }, [isPlaying]);
 
-  return <div ref={waveformRef} className="h-full w-full" />;
+  return <div ref={waveformRef} className={clsx("h-full w-full", className)} />;
 };
 
 export default Waveform;
