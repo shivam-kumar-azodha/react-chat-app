@@ -50,10 +50,10 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
   switch (variant) {
     case "FULL": {
       return (
-        <a
-          href={metadata.url || validatedUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <div
+          onClick={() => {
+            window.open(metadata.url || validatedUrl, "_blank");
+          }}
           className="flex flex-row rounded-lg bg-white shadow hover:bg-gray-100"
         >
           {metadata.image && (
@@ -87,7 +87,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
               </a>
             }
           </div>
-        </a>
+        </div>
       );
     }
     default: {
