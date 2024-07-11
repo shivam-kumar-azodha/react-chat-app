@@ -1,18 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { LinkPreviewVariant } from "../../types";
-
-interface LinkPreviewProps {
-  url: string;
-  variant?: LinkPreviewVariant;
-}
-
-interface LinkMetadata {
-  title: string;
-  description: string;
-  image: string;
-  url: string;
-}
+import { LinkPreviewProps, LinkMetadata } from "./__types__/LinksPreview.types";
 
 const LinkPreview: React.FC<LinkPreviewProps> = ({
   url,
@@ -23,9 +11,10 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
   const [error, setError] = useState<string | null>(null);
 
   // Add https:// if URL doesn't start with a protocol
-  if (!url.startsWith("http://") && !url.startsWith("https://")) {
-    url = `https://${url}`;
-  }
+  const validatedUrl =
+    url.startsWith("http://") || url.startsWith("https://")
+      ? url
+      : `https://${url}`;
 
   useEffect(() => {
     const fetchLinkPreview = async () => {
@@ -33,11 +22,8 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
       setError(null);
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_GET_META_DATA_URL}/?url=${encodeURIComponent(
-            url,
-          )}`,
+          `${import.meta.env.VITE_GET_META_DATA_URL}/?url=${encodeURIComponent(validatedUrl)}`,
         );
-        console.log(response);
         setMetadata(response.data);
       } catch (error) {
         setError("Failed to fetch link preview");
@@ -47,7 +33,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
     };
 
     fetchLinkPreview();
-  }, [url]);
+  }, [validatedUrl]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -65,7 +51,9 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
     case "FULL": {
       return (
         <a
-          href="#"
+          href={metadata.url || validatedUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex flex-row rounded-lg bg-white shadow hover:bg-gray-100"
         >
           {metadata.image && (
@@ -90,12 +78,12 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
             )}
             {
               <a
-                href={metadata.url || url}
+                href={metadata.url || validatedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="justify-end truncate text-xs text-blue-500"
               >
-                {metadata.url || url}
+                {metadata.url || validatedUrl}
               </a>
             }
           </div>
@@ -107,7 +95,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
         <div
           className="flex cursor-pointer flex-col gap-y-1 rounded-md border bg-white p-1 text-black transition-colors hover:bg-gray-100"
           onClick={() => {
-            window.open(metadata.url || url, "_blank");
+            window.open(metadata.url || validatedUrl, "_blank");
           }}
         >
           <div className="flex items-center gap-2">
@@ -125,12 +113,12 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({
 
           {
             <a
-              href={metadata.url || url}
+              href={metadata.url || validatedUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="max-w-48 truncate text-sm text-blue-500"
             >
-              {metadata.url || url}
+              {metadata.url || validatedUrl}
             </a>
           }
         </div>

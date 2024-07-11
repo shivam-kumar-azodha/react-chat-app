@@ -1,15 +1,17 @@
-import { LinkPreviewVariant } from "../../types";
+import React from "react";
+import clsx from "clsx";
+import { LinksPreviewProps } from "./__types__/LinksPreview.types";
 import LinkPreview from "./LinkPreview";
 
-const LinksPreview = ({
+const LinksPreview: React.FC<LinksPreviewProps> = ({
   links,
   linkPreviewVariant,
-}: {
-  links: string[];
-  linkPreviewVariant?: LinkPreviewVariant;
+  className,
 }) => {
   return (
-    <div className="flex items-center gap-x-3 overflow-scroll">
+    <div
+      className={clsx("flex items-center gap-x-3 overflow-scroll", className)}
+    >
       {links.map((link, index) => (
         <LinkPreview key={index} url={link} variant={linkPreviewVariant} />
       ))}
