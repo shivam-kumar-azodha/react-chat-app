@@ -87,7 +87,12 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
           {attachments?.length === 1 && renderAttachments(attachments)}
         </div>
         <pre className="font-sans">{parsedMessage}</pre>
-        {!!linksInMessage?.length && <LinksPreview links={linksInMessage} />}
+        {!!linksInMessage?.length && (
+          <LinksPreview
+            links={linksInMessage}
+            linkPreviewVariant={linksInMessage.length > 1 ? "INLINE" : "FULL"}
+          />
+        )}
       </div>
     </div>
   );

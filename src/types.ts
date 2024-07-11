@@ -33,3 +33,5 @@ export const FileTypeExtenions = {
   [FileTypes.Image]: ["jpg", "jpeg", "png"],
   [FileTypes.PDF]: ["pdf"],
 };
+
+export type LinkPreviewVariant = "INLINE" | "FULL";
