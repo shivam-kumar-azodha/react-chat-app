@@ -4,6 +4,7 @@ export interface IMessageData {
   receiverId: string;
   content: string;
   attachments?: IAttachment[];
+  createdAt?: string;
 }
 
 export interface IAttachment {

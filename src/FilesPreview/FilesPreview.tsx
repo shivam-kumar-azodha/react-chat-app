@@ -24,7 +24,7 @@ const FilesPreview: React.FC<FilesPreviewProps> = ({
         <div
           key={index}
           className={clsx(
-            "relative min-w-fit rounded border p-2",
+            "relative min-w-fit rounded border bg-white p-2",
             fileWrapperClassName,
           )}
         >

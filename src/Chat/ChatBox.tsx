@@ -66,8 +66,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         receiverId,
         content: JSON.stringify(message),
         attachments,
+        createdAt: new Date().toISOString(),
       };
-      console.log(messageData);
       sendMessage(messageData);
       setMessage("");
       setSelectedFiles([]);
@@ -209,7 +209,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             message={messageData.content}
             attachments={messageData?.attachments}
             isSent={messageData.senderId === currentUser}
+            createdAt={messageData.createdAt || ""}
             linksInMessage={getLinksIntoArray(messageData.content)}
+            senderId={messageData.senderId}
           />
         ))}
         <div ref={messagesEndRef} />

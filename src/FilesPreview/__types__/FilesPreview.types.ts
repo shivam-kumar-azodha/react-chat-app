@@ -1,3 +1,5 @@
+import { FileTypes } from "../../types";
+
 export interface FilePreviewData {
   name: string;
   type: string;
@@ -8,12 +10,12 @@ export interface FilePreviewData {
   file?: any;
 }
 
-export enum FileType {
-  IMAGE = "image/",
-  AUDIO = "audio/",
-  VIDEO = "video/",
-  PDF = "application/pdf",
-}
+export const FileTypeStartsWithMap = {
+  [FileTypes.Image]: ["image/", "application/image"],
+  [FileTypes.Audio]: ["audio/", "application/audio"],
+  [FileTypes.Video]: ["video/", "application/video"],
+  [FileTypes.PDF]: "application/pdf",
+};
 
 export interface FilesPreviewProps {
   files: FilePreviewData[];

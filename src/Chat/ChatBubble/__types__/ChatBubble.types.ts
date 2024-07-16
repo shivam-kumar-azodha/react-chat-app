@@ -5,6 +5,8 @@ export type ChatBubbleProps = {
   attachments?: IAttachment[];
   isSent: boolean;
   linksInMessage?: string[];
+  createdAt: string;
+  senderId: string;
 };
 
 export enum FileTypes {
