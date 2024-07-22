@@ -14,7 +14,7 @@ const PDFPreview = ({ file }: { file: IAttachment }) => {
   // @TODO: Create variants
 
   return (
-    <div className="flex flex-col items-start rounded-lg border-2 border-slate-600">
+    <div className="flex w-fit flex-col items-start rounded-lg border-2 border-slate-600">
       <div>
         <div className="relative h-40 overflow-hidden rounded-t-lg">
           <iframe

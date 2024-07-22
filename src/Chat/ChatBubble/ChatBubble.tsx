@@ -14,12 +14,16 @@ import { FileTypes, IAttachment } from "../../types";
 import { convertToUserMMHH, parseMessageWithLinks } from "../../helpers";
 import FilesPreview from "../../FilesPreview/FilesPreview";
 import { FilePreviewData } from "../../FilesPreview/__types__/FilesPreview.types";
+import SentChatArrowIcon from "../../icons/SentChatArrowIcon";
+import RecievedChatArrowIcon from "../../icons/RecievedChatArrowIcon";
 
 const renderAttachments = (attachments: IAttachment[]) => {
   if (!attachments.length) return null;
+
   if (attachments.length === 1) {
     const attachment = attachments[0];
-    switch (getFileTypeByExtension(attachment.name)) {
+    const fileType = getFileTypeByExtension(attachment.name);
+    switch (fileType) {
       case FileTypes.Audio:
         return (
           <div className="h-10 w-80">
@@ -33,7 +37,7 @@ const renderAttachments = (attachments: IAttachment[]) => {
       case FileTypes.Image:
         return (
           <img
-            src={attachment.cloudId as unknown as string}
+            src={attachment.cloudId}
             alt={attachment.name}
             className="h-30 rounded-md"
             draggable={false}
@@ -42,37 +46,9 @@ const renderAttachments = (attachments: IAttachment[]) => {
       case FileTypes.PDF:
         return <PDFPreview file={attachment} />;
       default:
-        return;
+        return null;
     }
   } else {
-    // return attachments.map((attachment) => {
-    //   switch (getFileTypeByExtension(attachment.name)) {
-    //     case FileTypes.Audio:
-    //       return (
-    //         <div className="h-10 w-80" key={attachment.cloudId}>
-    //           <AudioPlayer
-    //             audioBlob={attachment.cloudId}
-    //             playButtonIcon={<PlayIconWhite />}
-    //             pauseButtonIcon={<PauseIconWhite />}
-    //           />
-    //         </div>
-    //       );
-    //     case FileTypes.Image:
-    //       return (
-    //         <img
-    //           key={attachment.cloudId}
-    //           src={attachment.cloudId as unknown as string}
-    //           alt={attachment.name}
-    //           className="h-30 rounded-md"
-    //           draggable={false}
-    //         />
-    //       );
-    //     case FileTypes.PDF:
-    //       return <PDFPreview key={attachment.cloudId} file={attachment} />;
-    //     default:
-    //       return null;
-    //   }
-    // });
     return (
       <FilesPreview
         files={attachments as FilePreviewData[]}
@@ -99,56 +75,56 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
   }
 
   const parsedMessageWithLinks = parseMessageWithLinks(parsedMessage);
-
   const isOnlyEmoji =
     containsOnlyEmojis(parsedMessage) && attachments?.length === 0;
 
-  return isSent ? (
-    <div className={`mb-2 flex justify-end`}>
-      <div
-        className={`max-w-xs rounded-lg bg-blue-700 px-4 py-2 text-white md:max-w-md lg:max-w-lg ${
-          isOnlyEmoji ? "text-4xl" : "text-base"
-        }`}
-      >
-        {!!attachments?.length && (
-          <div className="mb-2">{renderAttachments(attachments)}</div>
-        )}
-        <pre
-          className="sent-message-text whitespace-pre-wrap break-words font-sans"
-          dangerouslySetInnerHTML={{ __html: parsedMessageWithLinks }}
+  const commonMessageContent = (
+    <>
+      {!!attachments?.length && (
+        <div className="mb-2">{renderAttachments(attachments)}</div>
+      )}
+      <pre
+        className="whitespace-pre-wrap break-words font-sans"
+        dangerouslySetInnerHTML={{ __html: parsedMessageWithLinks }}
+      />
+      {!!linksInMessage?.length && (
+        <LinksPreview
+          links={linksInMessage}
+          linkPreviewVariant={linksInMessage.length > 1 ? "INLINE" : "FULL"}
         />
+      )}
+    </>
+  );
 
-        {!!linksInMessage?.length && (
-          <LinksPreview
-            links={linksInMessage}
-            linkPreviewVariant={linksInMessage.length > 1 ? "INLINE" : "FULL"}
-          />
-        )}
+  const sentMessageStyle = `max-w-xs rounded-b-lg rounded-tl-lg bg-[#3537E8] px-4 py-2 text-white md:max-w-md lg:max-w-lg ${
+    isOnlyEmoji ? "text-4xl" : "text-base"
+  }`;
+
+  const receivedMessageStyle = `flex max-w-xs flex-col justify-start rounded-b-lg rounded-tr-lg bg-[#EFEFEF99] px-4 py-2 text-black md:max-w-md lg:max-w-lg ${
+    isOnlyEmoji ? "text-4xl" : "text-base"
+  }`;
+
+  return isSent ? (
+    <div className="mb-2 flex justify-end">
+      <div className={sentMessageStyle}>
+        {commonMessageContent}
         <p className="text-right text-xs text-white">
           {convertToUserMMHH(createdAt)}
         </p>
       </div>
+      <div className="-ml-1">
+        <SentChatArrowIcon />
+      </div>
     </div>
   ) : (
     <div className="mb-2 flex">
-      <div
-        className={`flex max-w-xs flex-col justify-start rounded-lg bg-gray-300 px-4 py-2 text-black md:max-w-md lg:max-w-lg`}
-      >
+      <div>
+        <RecievedChatArrowIcon />
+      </div>
+      <div className={receivedMessageStyle}>
         <div className="text-xs text-[#0F3070]">{senderId}</div>
-        {!!attachments?.length && (
-          <div className="mb-2">{renderAttachments(attachments)}</div>
-        )}
-        <pre
-          className="recieved-message-text whitespace-pre-wrap break-words font-sans"
-          dangerouslySetInnerHTML={{ __html: parsedMessageWithLinks }}
-        />
-        {!!linksInMessage?.length && (
-          <LinksPreview
-            links={linksInMessage}
-            linkPreviewVariant={linksInMessage.length > 1 ? "INLINE" : "FULL"}
-          />
-        )}
-        <p className="text-right text-xs text-gray-700">
+        {commonMessageContent}
+        <p className="mt-1 text-right text-xs text-gray-700">
           {convertToUserMMHH(createdAt)}
         </p>
       </div>
